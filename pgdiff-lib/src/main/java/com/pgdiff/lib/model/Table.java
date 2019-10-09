@@ -19,9 +19,9 @@ public class Table {
     String tableName;
     String tableType;
     String isInsertableInto;
-    List<Column> columns;
-//    List<IndexSchema> indexs;
-//    List<ForeignKeySchema> foreignKeys;
+    List<Column> columns = new ArrayList<>();
+    List<Index> indexs = new ArrayList<>();
+    List<ForeignKey> foreignKeys;
 
     public Boolean equals(Table table){
         return this.getCompareName().equals(table.getCompareName());
@@ -34,6 +34,12 @@ public class Table {
 
         for(Column column : columns){
                 columnSql.add(column.getCreate());
+        }
+        for(Index index : indexs){
+            columnSql.add(index.getCreate());
+        }
+        for(ForeignKey foreignKey : foreignKeys){
+            columnSql.add(foreignKey.getCreate());
         }
         sql += String.join(",\n\t", columnSql);
         sql += "\n);";

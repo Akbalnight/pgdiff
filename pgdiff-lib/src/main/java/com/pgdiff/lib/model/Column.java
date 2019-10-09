@@ -41,13 +41,13 @@ public class Column extends CompareInterface<Column>{
             sql += String.format("%s %s", this.getColumnName(), this.getDataType());
         }
 
-        if (this.getIsNullable().equals("NO")) {
+        if (this.getIsNullable().equals("NO"))
             sql += " NOT NULL";
-        }
-        if (this.getColumnDefault() != null) {
-            sql += String.format(" DEFAULT %s", this.getColumnDefault());
-        }
+        else
+            sql += " NULL";
 
+        if (this.getColumnDefault() != null)
+            sql += String.format(" DEFAULT %s", this.getColumnDefault());
 
         return sql;
     }

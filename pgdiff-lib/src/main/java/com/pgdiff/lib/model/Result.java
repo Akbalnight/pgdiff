@@ -24,4 +24,8 @@ public class Result{
      * 4 - drop table
      * */
     Integer resultCode;
+
+    public void addAllColumnAlters(List<String> alters){
+        this.columnAlters.addAll(alters);
+    }
 }

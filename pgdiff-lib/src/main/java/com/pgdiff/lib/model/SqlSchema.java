@@ -28,7 +28,8 @@ public class SqlSchema {
             "%s"+
             "ORDER BY compare_name;";
 
-    public final static String SqlColumnSchema = "" +"SELECT table_schema\n"+
+    public final static String SqlColumnSchema = "" +
+            "SELECT table_schema\n"+
             "    , table_name || '.' || column_name  AS compare_name\n"+
             "    , table_name\n"+
             "    , column_name\n"+
@@ -64,20 +65,17 @@ public class SqlSchema {
             "WHERE true\n"+
             "AND n.nspname = :schema\n"+
             "%s "+
-            "ORDER BY c.relname;";
+            "ORDER BY c.relname, con.contype;";
 
     public final static String SqlForeignKeySchema = "" +
         "SELECT c.relname || '.' || cn.conname AS compare_name\n" +
             "    , ns.nspname AS schema_name\n" +
             "    , c.relname AS table_name\n" +
             "    , cn.conname AS fk_name\n" +
-            "    , cc.relname AS fk_table_name\n" +
-            "    , col.attname as fk_column_name" +
             "    , pg_catalog.pg_get_constraintdef(cn.oid, true) as constraint_def\n" +
             "FROM pg_catalog.pg_constraint cn\n" +
             "INNER JOIN pg_class AS c ON (cn.conrelid = c.oid)\n" +
             "INNER JOIN pg_namespace AS ns ON (ns.oid = cn.connamespace)\n" +
-            "INNER join pg_attribute as col on (col.attnum = any(cn.confkey) and col.attrelid = cc.oid)\n" +
             "WHERE cn.contype = 'f'\n" +
             "AND ns.nspname = :schema\n" +
             "%s ";
