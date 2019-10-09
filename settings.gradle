@@ -1,0 +1,6 @@
+rootProject.name = 'pgdiff'
+
+include ':pgdiff-lib'
+include ':pgdiff-console'
+include ':pgdiff-ui'
+

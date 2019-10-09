@@ -15,13 +15,24 @@ import java.util.stream.Collectors;
 
 @Log4j2
 @Service
-public class CompareServiceV2 {
+public class CompareService {
 
     @Autowired
     DataSourceManager dataSourceManager;
 
     @Autowired
     CompareRepository compareRepository;
+
+    public boolean testConnect(DatabaseSettings databaseSettings){
+        try {
+            DataSource ds = dataSourceManager.createHikariDataSource(databaseSettings);
+            if (ds != null) return true;
+            else return false;
+        }catch (Exception e){
+            log.info("Bad test connect");
+            return false;
+        }
+    }
 
     public List<Result> initCompare(CompareRequest compareRequest){
         // Получить данные для первой БД (таблицы, колонки, индексы и внешние ключи)

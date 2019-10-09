@@ -1,4 +1,4 @@
-package com.queries.config;
+package com.pgdiff.ui.config;
 
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.RequestHandlerSelectors;

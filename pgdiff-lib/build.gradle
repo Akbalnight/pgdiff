@@ -1,42 +1,27 @@
 buildscript {
-    ext {
-        springBootVersion = "2.1.2.RELEASE"
-
-        appVersion = "1.0."
-        buildNumber = (System.getenv("BUILD_NUMBER")?.toString()?.toInteger() ?: 0)
-        appName = "pgdiff.jar"
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
+    repositories { mavenCentral() }
 }
 
-apply plugin: "java"
-apply plugin: "org.springframework.boot"
+ext { springBootVersion = '2.1.2.RELEASE' }
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
 apply plugin: "io.spring.dependency-management"
-apply plugin: "eclipse-wtp"
 
-version appVersion + buildNumber
-
+jar {
+    baseName = 'pgdiff-lib'
+    version = '0.0.1-SNAPSHOT'
+}
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
+repositories { mavenCentral() }
+
+compileJava {
+    options.encoding = "UTF-8"
 }
 
-bootJar { archiveName = appName }
-
-task bootJarCustom (type: Copy, dependsOn:bootJar){
-    from "build/libs"
-    into "./build"
-    include (appName)
-}
-configure(bootJarCustom) {
-    group = BasePlugin.BUILD_GROUP
-    description = "Assembles bootJar task and copy wars to build directory of root project"
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
 }
 
 dependencies {

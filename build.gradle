@@ -4,7 +4,7 @@ buildscript {
 
         appVersion = "1.0."
         buildNumber = (System.getenv("BUILD_NUMBER")?.toString()?.toInteger() ?: 0)
-        appName = "pgdiff-ui.jar"
+        appName = "pgdiff.jar"
     }
     repositories {
         mavenCentral()
@@ -40,14 +40,8 @@ configure(bootJarCustom) {
 }
 
 dependencies {
-    springBoot { buildInfo() }
-    compile project(":pgdiff-lib")
     compile("org.projectlombok:lombok")
-    compile("org.webjars:jquery:3.3.1")
-    compile("org.webjars:bootstrap:4.2.1")
-    compile("org.webjars:bootstrap-table:1.9.1")
-    compile("io.springfox:springfox-swagger2:2.9.2")
-    compile("io.springfox:springfox-swagger-ui:2.9.2")
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
+    compile("org.postgresql:postgresql:42.2.5")
+    compile("com.h2database:h2:1.4.199")
+    compile("org.springframework.boot:spring-boot-starter-data-jdbc:${springBootVersion}")
 }

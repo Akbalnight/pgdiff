@@ -1,4 +1,4 @@
-package com.pgdiff.model;
+package com.pgdiff.lib.model;
 
 public class SqlSchema {
 

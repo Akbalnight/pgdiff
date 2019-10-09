@@ -1,10 +1,8 @@
-package com.queries.controller;
+package com.pgdiff.ui.controller;
 
-import com.queries.model.CompareRequest;
-import com.queries.model.DatabaseSettings;
-import com.queries.model.ResultSchema;
-import com.queries.service.v1.CompareService;
-import com.queries.service.CompareServiceV2;
+import com.pgdiff.lib.model.CompareRequest;
+import com.pgdiff.lib.model.DatabaseSettings;
+import com.pgdiff.lib.service.CompareService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,28 +20,12 @@ public class CompareController {
     @Autowired
     CompareService compareService;
 
-    @Autowired
-    CompareServiceV2 compareServiceV2;
-
     @PostMapping("/find-diff")
-    public ResponseEntity findDiff( @RequestBody CompareRequest compareRequest ){
-        compareRequest.getDatabaseSettingsOne().setPgParams();
-        compareRequest.getDatabaseSettingsTwo().setPgParams();
-
-        List<ResultSchema> results = compareService.CompareTables(compareRequest);
-
-        if(results != null)
-            return ResponseEntity.ok().body(results);
-        else
-            return ResponseEntity.status(500).body(new resultConnect(500,"Diff failure"));
-    }
-
-    @PostMapping("/find-diff-v2")
     public ResponseEntity findDiffV2( @RequestBody CompareRequest compareRequest ){
         compareRequest.getDatabaseSettingsOne().setPgParams();
         compareRequest.getDatabaseSettingsTwo().setPgParams();
 
-        List results = compareServiceV2.initCompare(compareRequest);
+        List results = compareService.initCompare(compareRequest);
 
         if(results != null)
             return ResponseEntity.ok().body(results);

@@ -11,7 +11,7 @@ $('#findDiff').click(function () {
     };
 
 
-    requestAPI("/find-diff-v2", data_req)
+    requestAPI("/find-diff", data_req)
         .then(response => {
             console.log(response);
             $('#tableDiff').bootstrapTable('hideLoading');

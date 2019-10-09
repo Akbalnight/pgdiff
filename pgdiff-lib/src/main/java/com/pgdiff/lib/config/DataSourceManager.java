@@ -1,6 +1,6 @@
-package com.pgdiff.config;
+package com.pgdiff.lib.config;
 
-import com.pgdiff.model.DatabaseSettings;
+import com.pgdiff.lib.model.DatabaseSettings;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.log4j.Log4j2;
