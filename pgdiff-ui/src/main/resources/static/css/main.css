@@ -1,0 +1,67 @@
+#mainBar{
+    flex-grow: 1;
+    font-size: 14px;
+}
+#mainBar > *{
+    flex: 1 1 auto;
+}
+
+
+#resultDiff{
+    padding-top: 5px;
+}
+
+#tableDiff{
+    font-size: 13px;
+}
+
+#tableDiff .detail-view > td {
+    padding: 0;
+}
+
+.table-primary, .table-primary > td, .table-primary > th {
+    background-color: #edf5ff;
+}
+.table-success, .table-success > td, .table-success > th {
+    background-color: #e3ffe9;
+}
+.table-danger, .table-danger > td, .table-danger > th {
+    background-color: #ffe0e3;
+}
+.table-info, .table-info > td, .table-info > th {
+    background-color: #bee5eb85;
+}
+
+.w3-code{
+    border-left: 4px solid #bee5eb85
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #17a2b8;
+    background-color: #17a2b8;
+}
+
+.toast-header{
+    padding: 0 10px;
+}
+
+.alert{
+    margin-bottom: 0;
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+table {
+    width:100%;
+    table-layout:fixed;
+}
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Pg Diff v2</title>
+
+    <!--<link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>-->
+    <!--<link rel="stylesheet" th:href="@{webjars/bootstrap-table/1.9.1/bootstrap-table.css}"/>-->
+
+    <link rel="stylesheet" href="/css/w3.css"/>
+    <link rel="stylesheet" th:href="@{/bootstrap-4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap-table-1.15.4/bootstrap-table.min.css}"/>
+    <link rel="stylesheet" th:href="@{/font-awesome-4.7.0/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+
+</head>
+
+<body>
+    <div role="main">
+        <div class="container">
+            <div class="row my-2">
+                <div class="col">
+                    <div class="row border border-info px-3 py-2 mx-0 bg-light rounded">
+                        <div class="col-2 pl-0">
+                            <div class="">
+                                <select id="ddd" class="custom-select custom-select-sm rounded-pill">
+                                    <option value="-1">Select ...</option>
+                                    <option>TABLE</option>
+                                    <option>COLUMN</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm pr-1">
+                    <div class="border border-info px-2 py-2 bg-light rounded">
+                        <div class="row">
+                            <h5 class="col-8">Source server</h5>
+                            <span class="col-4" id="resultConnect1"></span>
+                        </div>
+                        <div class="form-group form-row">
+                            <div class="col-3">
+                                <input id="host1" value="10.5.31.158" class="form-control form-control-sm rounded-pill" type="text" placeholder="Host">
+                            </div>
+                            <div class="col-3">
+                                <input id="port1" value="5432" class="form-control form-control-sm rounded-pill" type="text" placeholder="Port">
+                            </div>
+                            <div class="col-3">
+                                <input id="dbname1" value="pgdiffs" class="form-control form-control-sm rounded-pill" type="text" placeholder="Db name">
+                            </div>
+                            <div class="col-3">
+                                <input id="schema1" value="assd" class="form-control form-control-sm rounded-pill" type="text" placeholder="Schema">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-4">
+                                <input id="username1" value="postgres" class="form-control form-control-sm rounded-pill" type="text" placeholder="Username">
+                            </div>
+                            <div class="col-4">
+                                <input id="password1" value="postgres" class="form-control form-control-sm rounded-pill" type="password" placeholder="Password">
+                            </div>
+                            <div class="col-4">
+                                <button id="ConnOne" class="btn btn-outline-info btn-sm btn-block rounded-pill">Test connection</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm pl-1">
+                    <div class="border border-info px-2 py-2 bg-light rounded">
+                        <div class="row">
+                            <h5 class="col-8">Destination server</h5>
+                            <span class="col-4" id="resultConnect2"></span>
+                        </div>
+                        <div class="form-group form-row">
+                            <div class="col-3">
+                                <input id="host2" value="10.5.31.158" class="form-control form-control-sm rounded-pill" type="text" placeholder="Host">
+                            </div>
+                            <div class="col-3">
+                                <input id="port2" value="5432" class="form-control form-control-sm rounded-pill" type="text" placeholder="Port">
+                            </div>
+                            <div class="col-3">
+                                <input id="dbname2" value="pgdiffd" class="form-control form-control-sm rounded-pill" type="text" placeholder="Db name">
+                            </div>
+                            <div class="col-3">
+                                <input id="schema2" value="assd" class="form-control form-control-sm rounded-pill" type="text" placeholder="Schema">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-4">
+                                <input id="username2" value="postgres" class="form-control form-control-sm rounded-pill" type="text" placeholder="Username">
+                            </div>
+                            <div class="col-4">
+                                <input id="password2" value="postgres" class="form-control form-control-sm rounded-pill" type="password" placeholder="Password">
+                            </div>
+                            <div class="col-4">
+                                <button id="ConnTwo" class="btn btn-outline-info btn-sm btn-block rounded-pill">Test connection</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col">
+                    <div class="row border border-info px-2 py-2 mx-0 bg-light rounded">
+                        <div class="col-2 pl-0">
+                            <div class="">
+                                <select id="operation" class="custom-select custom-select-sm rounded-pill">
+                                    <option value="-1">Select operation</option>
+                                    <option>TABLE</option>
+                                    <option>COLUMN</option>
+                                    <option>INDEX</option>
+                                    <option>FOREIGN_KEY</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-2 custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="withPartitions">
+                            <label class="custom-control-label" for="withPartitions">With partitions</label>
+                        </div>
+                        <!--<span class="col-2 text-center" id="resultDiff"></span>-->
+                        <div class="col-2">
+                            <button id="findDiff" class="btn btn-info btn-sm btn-block rounded-pill">Find diff</button>
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-2 pr-0">
+                            <div class="d-flex flex-row justify-content-end">
+                                <div class="mr-1">
+                                    <button id="copyDiff" type="button"
+                                            data-toggle="tooltip"
+                                            data-placement="top" title="Copy to clipboard"
+                                            class="btn btn-info btn-sm btn-block rounded-left"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+                                </div>
+                                <div class="">
+                                    <button id="exportDiff" type="button"
+                                            data-toggle="tooltip"
+                                            data-placement="top" title="Export to SQL"
+                                            class="btn btn-success btn-sm btn-block rounded-right"><i class="fa fa-external-link" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tableDiffContainer" class="border border-info m-2 bg-light rounded" style="height: calc(100vh - 275px)">
+            <table
+                    id="tableDiff"
+                    data-toggle="table"
+                    data-click-to-select="true"
+                    data-height="150"
+                    data-row-style="rowStyle"
+                    data-detail-view="true"
+                    data-detail-view-icon="false"
+                    data-detail-view-by-click="false"
+                    data-detail-formatter="detailFormatter"
+                    class="table-sm">
+                <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="nameTableOne" data-width="50" data-width-unit="%">Source</th>
+                    <th data-field="nameTableTwo" data-width="50" data-width-unit="%">Destination</th>
+                    <!--<th class="text-truncate" data-field="action" data-width="50" data-width-unit="%">Action</th>-->
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+
+    </div>
+    <!-- /.container -->
+
+    <div role="alert" aria-live="assertive" aria-atomic="true" class="toast" data-autohide="true" style="position: absolute; top: 38%; left: 44%;">
+        <div class="toast-header">
+            <strong class="mr-auto">Copy result</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            <strong class="mr-autos" role="alert" id="resultCopy"></strong>
+        </div>
+    </div>
+
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/bootstrap-4.3.1/js/bootstrap.bundle.js"></script>
+    <script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>
+    <script src="/js/FileSaver.min.js"></script>
+    <script src="/js/w3codecolor.js"></script>
+
+    <script src="/js/Utils.js"></script>
+    <script src="/js/Connect.js"></script>
+    <script src="/js/Diff.js"></script>
+
+    <script>
+        $('.toast').toast( {delay: 1000} )
+        w3CodeColor();
+
+        $( document ).ready(function() { resizeTableDiff(); });
+        $( window ).resize(function() { resizeTableDiff(); });
+
+        function resizeTableDiff() {
+            $('#tableDiff').bootstrapTable('refreshOptions', { height:$('#tableDiffContainer').height() - 5 })
+            $('#tableDiff').bootstrapTable('expandAllRows');
+            w3CodeColor();
+        }
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        function detailFormatter(index, row) {
+            var html = []; //row.ddlTableOne.split('\n');
+
+            if(row.columnAlters) {
+                row.columnAlters.forEach(function (value, index) {
+                    html.push('<div class="sqlHigh">' + value + '</div>');
+                })
+            }
+
+            // return '<div class="w3-code m-0 w3-small">' + html.join('') + '</div>';
+
+            return '<div>' +
+                '   <div class="w3-code m-0 w3-small d-flex">' +
+                '       <pre class="sqlHigh" style="flex-basis: 53%;">'+ row.ddlTableOne +'</pre>' +
+                '       <pre class="sqlHigh">'+ (row.ddlTableTwo !== null ? row.ddlTableTwo : 'N/A') +'</pre>' +
+                '   </div>' +
+                '   <div class="w3-code m-0 w3-small">' + html.join('') + '</div>' +
+                '</div>';
+        }
+
+        function rowStyle(row, index) {
+            return { classes: "table-info" };
+            // if(row.actionCode === 0)
+            //     return { classes: "table-primary" };
+            // else if(row.actionCode === 1)
+            //     return { classes: "table-success" };
+            // else if(row.actionCode === -1)
+            //     return { classes: "table-danger" };
+        }
+    </script>
+</body>
+</html>
