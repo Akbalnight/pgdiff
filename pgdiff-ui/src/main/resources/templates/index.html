@@ -150,26 +150,32 @@
 
 
         <div id="tableDiffContainer" class="border border-info m-2 bg-light rounded" style="height: calc(100vh - 275px)">
-            <table
-                    id="tableDiff"
-                    data-toggle="table"
-                    data-click-to-select="true"
-                    data-height="150"
-                    data-row-style="rowStyle"
-                    data-detail-view="true"
-                    data-detail-view-icon="false"
-                    data-detail-view-by-click="false"
-                    data-detail-formatter="detailFormatter"
-                    class="table-sm">
-                <thead>
-                <tr>
-                    <th data-field="state" data-checkbox="true"></th>
-                    <th data-field="nameTableOne" data-width="50" data-width-unit="%">Source</th>
-                    <th data-field="nameTableTwo" data-width="50" data-width-unit="%">Destination</th>
-                    <!--<th class="text-truncate" data-field="action" data-width="50" data-width-unit="%">Action</th>-->
-                </tr>
-                </thead>
-            </table>
+
+            <div id="source"></div>
+            <div id="dest"></div>
+
+
+
+            <!--<table-->
+                    <!--id="tableDiff"-->
+                    <!--data-toggle="table"-->
+                    <!--data-click-to-select="true"-->
+                    <!--data-height="150"-->
+                    <!--data-row-style="rowStyle"-->
+                    <!--data-detail-view="true"-->
+                    <!--data-detail-view-icon="false"-->
+                    <!--data-detail-view-by-click="false"-->
+                    <!--data-detail-formatter="detailFormatter"-->
+                    <!--class="table-sm">-->
+                <!--<thead>-->
+                <!--<tr>-->
+                    <!--<th data-field="state" data-checkbox="true"></th>-->
+                    <!--<th data-field="nameTableOne" data-width="50" data-width-unit="%">Source</th>-->
+                    <!--<th data-field="nameTableTwo" data-width="50" data-width-unit="%">Destination</th>-->
+                    <!--&lt;!&ndash;<th class="text-truncate" data-field="action" data-width="50" data-width-unit="%">Action</th>&ndash;&gt;-->
+                <!--</tr>-->
+                <!--</thead>-->
+            <!--</table>-->
         </div>
 
 
@@ -193,6 +199,8 @@
     <script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>
     <script src="/js/FileSaver.min.js"></script>
     <script src="/js/w3codecolor.js"></script>
+    <script src="/ace/ace.js"></script>
+
 
     <script src="/js/Utils.js"></script>
     <script src="/js/Connect.js"></script>
@@ -202,7 +210,9 @@
         $('.toast').toast( {delay: 1000} )
         w3CodeColor();
 
-        $( document ).ready(function() { resizeTableDiff(); });
+        $( document ).ready(function() {
+            resizeTableDiff();
+        });
         $( window ).resize(function() { resizeTableDiff(); });
 
         function resizeTableDiff() {
@@ -215,27 +225,74 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        function detailFormatter(constraint, row) {
+        var source = ace.edit('source');
+        source.getSession().setMode("ace/mode/sql");
+        source.setShowPrintMargin(false);
+        source.setReadOnly(true);
+
+        var dest = ace.edit('dest');
+        dest.getSession().setMode("ace/mode/sql");
+        dest.setShowPrintMargin(false);
+        dest.setReadOnly(true);
+
+        source.on("scroll", function(delta){
+            // delta.start, delta.end, delta.lines, delta.action
+            console.log(delta)
+        });
+
+
+
+
+        function detailFormatter(i, row) {
             var html = []; //row.ddlTableOne.split('\n');
 
-            if(row.alters) {
-                row.alters.forEach(function (value, constraint) {
-                    html.push('<div class="sqlHigh">' + value + '</div>');
-                })
-            }
+            // if(row.alters) {
+            //     row.alters.forEach(function (value, constraint) {
+            //         html.push('<div class="sqlHigh">' + value + '</div>');
+            //     })
+            // }
 
             // return '<div class="w3-code m-0 w3-small">' + html.join('') + '</div>';
 
-            return '<div>' +
-                '   <div class="w3-code m-0 w3-small d-flex">' +
-                '       <pre class="sqlHigh" style="flex-basis: 53%;">'+ row.ddlTableOne +'</pre>' +
-                '       <pre class="sqlHigh">'+ (row.ddlTableTwo !== null ? row.ddlTableTwo : 'N/A') +'</pre>' +
-                '   </div>' +
-                '   <div class="w3-code m-0 w3-small">' + html.join('') + '</div>' +
-                '</div>';
+            // return '<div>' +
+            //     '   <div class="w3-code m-0 w3-small d-flex">' +
+            //     '       <pre class="sqlHigh" style="flex-basis: 53%;">'+ row.ddlTableOne +'</pre>' +
+            //     '       <pre class="sqlHigh">'+ (row.ddlTableTwo !== null ? row.ddlTableTwo : 'N/A') +'</pre>' +
+            //     '   </div>' +
+            //     '   <div class="w3-code m-0 w3-small">' + html.join('') + '</div>' +
+            //     '</div>';
+
+
+
+            // if(row.alters) {
+            //     row.alters.forEach(function (value, constraint) {
+            //         html.push();
+            //     })
+            // }
+
+            // var selectSql = [];
+            // // response.forEach(function(item, i) {
+            //     // console.log(item);
+            //     // selectSql.push("-- Source: " + item.source +" \n-- Destination: " + item.destination + "\n" + item.action+"\n\n");
+            //
+            //     if(row.resultCode !== -1) {
+            //         var ddl = row.resultCode === 0 ? "\n" + row.ddlTableOne : '';
+            //         var columns = row.alters ? "\n" + row.alters.join('\n') : '';
+            //
+            //         selectSql.push("-- Source: " + row.nameTableOne + " \n-- Destination: " + row.nameTableTwo + ddl + columns + "\n\n");
+            //     }
+            // // });
+
+
+            // return '<div id="rowNum' + i + '">' + selectSql.join(''); + '</div>';
+
+            return '<div id="rowNum' + i + '"></div>';;
+
+
         }
 
-        function rowStyle(row, constraint) {
+        function rowStyle(row, i) {
+            //
             return { classes: "table-info" };
             // if(row.actionCode === 0)
             //     return { classes: "table-primary" };

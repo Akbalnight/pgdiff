@@ -58,7 +58,7 @@ public class Column extends CompareInterface<Column>{
 
         // Code and test a column change from integer to bigint
         if (!this.getDataType().equals(column.getDataType())) {
-            sql.add(String.format("-- WARNING: Это изменение типа может не сработать: (%s to %s).\n", column.getDataType(), this.getDataType()));
+            sql.add(String.format("-- WARNING: Это изменение типа может не сработать: (%s to %s).", column.getDataType(), this.getDataType()));
             sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s TYPE %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getDataType()));
         }
 

@@ -11,6 +11,11 @@
     padding-top: 5px;
 }
 
+#tableDiffContainer {
+    position: relative;
+    display: flex;
+}
+
 #tableDiff{
     font-size: 13px;
 }
@@ -64,4 +69,11 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+#source, #dest {
+    flex-grow: 1;
+}
+[id^="rowNum"]{
+    height: 100px;
 }

@@ -35,8 +35,18 @@ public class CompareService {
     }
 
     public List<Result> initCompare(CompareRequest compareRequest){
-        // Получить данные для первой БД (таблицы, колонки, индексы и внешние ключи)
-        // Получить данные для второй БД (таблицы, колонки, индексы и внешние ключи)
+        /**
+         * Схемы
+         * Роли
+         * Последовательности (Sequences)
+         * + Таблицы + колонки + ограничения (pk / un / fk)
+         * + Вьюхи
+         * Функции
+         * Триггеры
+         * Владельцы
+         * Права на отношения
+         * Права на атрибутты
+         */
         try {
             DataSource dataSourceOne = dataSourceManager.createHikariDataSource(compareRequest.getDatabaseSettingsOne());
             DataSource dataSourceTwo = dataSourceManager.createHikariDataSource(compareRequest.getDatabaseSettingsTwo());
@@ -191,127 +201,3 @@ public class CompareService {
         return sql; //compareObjectOne.getResults();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    public void doDiifыыы(CompareRequest compareRequest){
-//
-//
-//        try {
-//            DataSource dataSourceOne = dataSourceManager.createHikariDataSource(compareRequest.getDatabaseSettingsOne());
-//
-//            List<Table> tables = CompareRepository.getListForCompare(
-//                    dataSourceOne,
-//                    compareRequest.getDatabaseSettingsOne().getSchema(),
-//                    SqlSchema.setPartitionFilterForInfoSchema(SqlTableSchema, false), BeanPropertyRowMapper.newInstance(Table.class));
-//
-//            List<Column> columns = CompareRepository.getListForCompare(
-//                    dataSourceOne,
-//                    compareRequest.getDatabaseSettingsOne().getSchema(),
-//                    SqlSchema.setPartitionFilterForInfoSchema(SqlColumnSchema, false), BeanPropertyRowMapper.newInstance(Column.class));
-//
-//            Map<String, List<Column>> map = columns.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
-//
-//            for (Table table : tables){
-//                addTable(table, map.get(table.getTableName()));
-//            }
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    void addTable(Table table, List<Column> columns){
-//        String sql = String.format("CREATE %s %s.%s (\n\t", table.getTableType(), table.getTableSchema(), table.getTableName());
-//
-//
-//        List<String> d = new ArrayList();
-//
-//        for(Column column : columns){
-//            d.add(addColumn(column));
-//        }
-//        sql += String.join(",\n\t", d);
-//        sql += "\n);";
-////        for(constraintschema index : table.constraints){
-////            addIndex(index);
-////        }
-////        for(ForeignKeySchema fkey : table.foreignKeys){
-////            /**
-////             * Найти таблицу и создать если нет
-////             */
-////
-////            addFkey(fkey);
-////        }
-//        log.info(sql);
-//    }
-//
-//
-//
-//
-//    String addColumn(Column column){
-//
-//        String sql = "";
-//        if (column.getDataType().equals("character varying")) {
-//            Long maxLength = column.getCharacterMaximumLength();
-//            if (maxLength == null) {
-//                sql += String.format("%s character varying", column.getColumnName());
-//            } else {
-//                sql += String.format("%s character varying(%s)", column.getColumnName(), maxLength);
-//            }
-//        } else {
-//            sql += String.format("%s %s", column.getColumnName(), column.getDataType());
-//        }
-//
-//        if (column.getIsNullable().equals("NO")) {
-//            sql += " NOT NULL";
-//        }
-//        if (column.getColumnDefault() != null) {
-//            sql += String.format(" DEFAULT %s", column.getColumnDefault());
-//        }
-//        return sql;
-//    }
-//
-//
-//
-//
-//    void addIndex(constraintschema index){
-//
-//    }
-//    void addFkey(ForeignKeySchema fkey){
-//
-//    }
-
-//}
