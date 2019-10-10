@@ -65,7 +65,7 @@ function getSelectRowsSql() {
 
         if(item.resultCode !== -1) {
             var ddl = item.resultCode === 0 ? "\n" + item.ddlTableOne : '';
-            var columns = item.columnAlters ? "\n" + item.columnAlters.join('\n') : '';
+            var columns = item.alters ? "\n" + item.alters.join('\n') : '';
 
             selectSql.push("-- Source: " + item.nameTableOne + " \n-- Destination: " + item.nameTableTwo + ddl + columns + "\n\n");
         }

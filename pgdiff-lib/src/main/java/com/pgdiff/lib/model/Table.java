@@ -18,31 +18,34 @@ public class Table {
     String compareName;
     String tableName;
     String tableType;
-    String isInsertableInto;
+    String viewSelect;
     List<Column> columns = new ArrayList<>();
-    List<Index> indexs = new ArrayList<>();
-    List<ForeignKey> foreignKeys;
+    List<Constraint> constraints = new ArrayList<>();
 
     public Boolean equals(Table table){
         return this.getCompareName().equals(table.getCompareName());
     }
 
     public String getDDL(String destinationSchema){
-        String sql = String.format("CREATE %s %s.%s (\n\t", this.getTableType(), destinationSchema, this.getTableName());
+        String sql = "";
 
-        List<String> columnSql = new ArrayList();
+        if (this.getTableType().equals("TABLE")) {
+            sql = String.format("CREATE %s %s.%s (\n\t", this.getTableType(), destinationSchema, this.getTableName());
 
-        for(Column column : columns){
+            List<String> columnSql = new ArrayList();
+
+            for (Column column : columns) {
                 columnSql.add(column.getCreate());
+            }
+            for (Constraint constraint : constraints) {
+                columnSql.add(constraint.getCreate());
+            }
+            sql += String.join(",\n\t", columnSql);
+            sql += "\n);";
+        }else if (this.getTableType().equals("VIEW")){
+            sql = String.format("%s\n", getDrop(destinationSchema));
+            sql += String.format("CREATE OR REPLACE %s %s.%s\n%s\n", this.getTableType(), destinationSchema, this.getTableName(), this.getViewSelect());
         }
-        for(Index index : indexs){
-            columnSql.add(index.getCreate());
-        }
-        for(ForeignKey foreignKey : foreignKeys){
-            columnSql.add(foreignKey.getCreate());
-        }
-        sql += String.join(",\n\t", columnSql);
-        sql += "\n);";
 //        log.info(sql);
         return sql;
     }

@@ -47,24 +47,17 @@ public class CompareService {
             List<Column> columnsOne = compareRepository.getColumnList(dataSourceOne, compareRequest.getDatabaseSettingsOne().getSchema(), compareRequest.getWithPartitions());
             List<Column> columnsTwo = compareRepository.getColumnList(dataSourceTwo, compareRequest.getDatabaseSettingsTwo().getSchema(), compareRequest.getWithPartitions());
 
-            List<Index> indexsOne = compareRepository.getIndexList(dataSourceOne, compareRequest.getDatabaseSettingsOne().getSchema(), compareRequest.getWithPartitions());
-            List<Index> indexsTwo = compareRepository.getIndexList(dataSourceTwo, compareRequest.getDatabaseSettingsTwo().getSchema(), compareRequest.getWithPartitions());
-
-            List<ForeignKey> foreignKeysOne = compareRepository.getForeignKeyList(dataSourceOne, compareRequest.getDatabaseSettingsOne().getSchema(), compareRequest.getWithPartitions());
-            List<ForeignKey> foreignKeysTwo = compareRepository.getForeignKeyList(dataSourceTwo, compareRequest.getDatabaseSettingsTwo().getSchema(), compareRequest.getWithPartitions());
-
+            List<Constraint> constraintsOne = compareRepository.getConstraintList(dataSourceOne, compareRequest.getDatabaseSettingsOne().getSchema(), compareRequest.getWithPartitions());
+            List<Constraint> constraintsTwo = compareRepository.getConstraintList(dataSourceTwo, compareRequest.getDatabaseSettingsTwo().getSchema(), compareRequest.getWithPartitions());
 
             Map<String, List<Column>> mapColumnsOne = columnsOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
             Map<String, List<Column>> mapColumnsTwo = columnsTwo.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
 
-            Map<String, List<Index>> mapIndexsOne = indexsOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
-            Map<String, List<Index>> mapIndexsTwo = indexsTwo.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
+            Map<String, List<Constraint>> mapConstraintsOne = constraintsOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
+            Map<String, List<Constraint>> mapConstraintsTwo = constraintsTwo.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
 
-            Map<String, List<ForeignKey>> mapForeignKeysOne = foreignKeysOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
-            Map<String, List<ForeignKey>> mapForeignKeysTwo = foreignKeysTwo.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
-
-            tablesOne = mapping(tablesOne, mapColumnsOne, mapIndexsOne, mapForeignKeysOne);
-            tablesTwo = mapping(tablesTwo, mapColumnsTwo, mapIndexsTwo, mapForeignKeysTwo);
+            tablesOne = mapping(tablesOne, mapColumnsOne, mapConstraintsOne);
+            tablesTwo = mapping(tablesTwo, mapColumnsTwo, mapConstraintsTwo);
 
 
             // Хранит результат сравнения
@@ -86,34 +79,23 @@ public class CompareService {
 
                     // Если таблицы равны, то проверяем колонки, индексы и внешние ключи
                     if(compareVal) {
-                        //String resultVal = compareObjectOne.changeQuery(rowOne, rowTwo);
-                        //if(resultVal != "") compareObjectTwo.logResult(rowOne, rowTwo, resultVal, 0);
-                        //compareObjectTwo.removeRow(rowTwo);
-
                         result.setNameTableTwo(tableTwo.getTableName());
                         result.setDdlTableTwo(tableTwo.getDDL(destinationSchema));
 
-                        result.setColumnAlters(
+                        result.setAlters(
                             doDiff(
                                 new ArrayList<>(tableOne.getColumns()),
                                 new ArrayList<>(tableTwo.getColumns()),
                                 destinationSchema));
 
-                        result.addAllColumnAlters(
+                        result.addAllAlters(
                             doDiff(
-                                    new ArrayList<>(tableOne.getIndexs()),
-                                    new ArrayList<>(tableTwo.getIndexs()),
+                                    new ArrayList<>(tableOne.getConstraints()),
+                                    new ArrayList<>(tableTwo.getConstraints()),
                                     destinationSchema)
                         );
 
-                        result.addAllColumnAlters(
-                                doDiff(
-                                        new ArrayList<>(tableOne.getForeignKeys()),
-                                        new ArrayList<>(tableTwo.getForeignKeys()),
-                                        destinationSchema)
-                        );
-
-                        if(result.getColumnAlters() != null && result.getColumnAlters().size() > 0) result.setResultCode(1);
+                        if(result.getAlters() != null && result.getAlters().size() > 0) result.setResultCode(1);
                         else result.setResultCode(-1);
 
 //                        log.info(colSql);
@@ -152,23 +134,18 @@ public class CompareService {
 
     }
 
-    private List<Table> mapping(List<Table> tables, Map<String, List<Column>> columns, Map<String, List<Index>> indexs, Map<String, List<ForeignKey>> foreignKeys){
+    private List<Table> mapping(List<Table> tables, Map<String, List<Column>> columns, Map<String, List<Constraint>> constraints){
         for(Table table : tables){
             table.setColumns(
                     columns.get(table.getTableName()) != null ?
                             columns.get(table.getTableName()) :
                             new ArrayList<>()
             );
-            table.setIndexs(
-                    indexs.get(table.getTableName()) != null ?
-                            indexs.get(table.getTableName()) :
+            table.setConstraints(
+                    constraints.get(table.getTableName()) != null ?
+                            constraints.get(table.getTableName()) :
                             new ArrayList<>()
                     );
-            table.setForeignKeys(
-                    foreignKeys.get(table.getTableName()) != null ?
-                            foreignKeys.get(table.getTableName()) :
-                            new ArrayList<>()
-            );
         }
         return tables;
     }
@@ -288,7 +265,7 @@ public class CompareService {
 //        }
 //        sql += String.join(",\n\t", d);
 //        sql += "\n);";
-////        for(IndexSchema index : table.indexs){
+////        for(constraintschema index : table.constraints){
 ////            addIndex(index);
 ////        }
 ////        for(ForeignKeySchema fkey : table.foreignKeys){
@@ -330,7 +307,7 @@ public class CompareService {
 //
 //
 //
-//    void addIndex(IndexSchema index){
+//    void addIndex(constraintschema index){
 //
 //    }
 //    void addFkey(ForeignKeySchema fkey){

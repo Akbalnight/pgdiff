@@ -31,7 +31,7 @@ public class CompareRepository {
         return
                 new NamedParameterJdbcTemplate(dataSource)
                         .query(
-                                SqlSchema.setPartitionFilterForInfoSchema(SqlTableSchema, withPartitions),
+                                SqlSchema.setPartitionFiltersForPgClass(SqlTableSchema, withPartitions),
                                 new MapSqlParameterSource("schema", schema),
                                 BeanPropertyRowMapper.newInstance(Table.class));
     }
@@ -40,26 +40,17 @@ public class CompareRepository {
         return
                 new NamedParameterJdbcTemplate(dataSource)
                         .query(
-                                SqlSchema.setPartitionFilterForInfoSchema(SqlColumnSchema, withPartitions),
+                                SqlSchema.setPartitionFiltersForPgClass(SqlColumnSchema, withPartitions),
                                 new MapSqlParameterSource("schema", schema),
                                 BeanPropertyRowMapper.newInstance(Column.class));
     }
 
-    public List<Index> getIndexList(DataSource dataSource, String schema, Boolean withPartitions){
+    public List<Constraint> getConstraintList(DataSource dataSource, String schema, Boolean withPartitions){
         return
                 new NamedParameterJdbcTemplate(dataSource)
                         .query(
-                                SqlSchema.setPartitionFiltersForPgClass(SqlIndexSchema, withPartitions),
+                                SqlSchema.setPartitionFiltersForPgClass(SqlConstraintSchema, withPartitions),
                                 new MapSqlParameterSource("schema", schema),
-                                BeanPropertyRowMapper.newInstance(Index.class));
-    }
-
-    public List<ForeignKey> getForeignKeyList(DataSource dataSource, String schema, Boolean withPartitions){
-        return
-                new NamedParameterJdbcTemplate(dataSource)
-                        .query(
-                                SqlSchema.setPartitionFiltersForPgClass(SqlForeignKeySchema, withPartitions),
-                                new MapSqlParameterSource("schema", schema),
-                                BeanPropertyRowMapper.newInstance(ForeignKey.class));
+                                BeanPropertyRowMapper.newInstance(Constraint.class));
     }
 }

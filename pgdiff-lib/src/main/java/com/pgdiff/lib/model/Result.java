@@ -16,7 +16,7 @@ public class Result{
     String nameTableTwo;
     String ddlTableOne;
     String ddlTableTwo;
-    List<String> columnAlters;
+    List<String> alters;
     /**
      * -1 - not action
      * 0 - create table
@@ -25,7 +25,7 @@ public class Result{
      * */
     Integer resultCode;
 
-    public void addAllColumnAlters(List<String> alters){
-        this.columnAlters.addAll(alters);
+    public void addAllAlters(List<String> alters){
+        this.alters.addAll(alters);
     }
 }

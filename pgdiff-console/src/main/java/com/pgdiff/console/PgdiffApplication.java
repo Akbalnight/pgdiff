@@ -76,7 +76,7 @@ public class PgdiffApplication implements CommandLineRunner
                     String ddlS = result.getResultCode() == 0 ? "\n" + result.getDdlTableOne() : "";
                     String ddlD = result.getResultCode() == 4 ? "\n" + result.getDdlTableTwo() : "";
 
-                    String columns = result.getColumnAlters() != null ? "\n" + String.join("\n", result.getColumnAlters()) : "";
+                    String columns = result.getAlters() != null ? "\n" + String.join("\n", result.getAlters()) : "";
 
                     String line = String.format("-- Source: %s\n-- Destination: %s%s%s%s\n\n",
                             result.getNameTableOne(),

@@ -215,11 +215,11 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        function detailFormatter(index, row) {
+        function detailFormatter(constraint, row) {
             var html = []; //row.ddlTableOne.split('\n');
 
-            if(row.columnAlters) {
-                row.columnAlters.forEach(function (value, index) {
+            if(row.alters) {
+                row.alters.forEach(function (value, constraint) {
                     html.push('<div class="sqlHigh">' + value + '</div>');
                 })
             }
@@ -235,7 +235,7 @@
                 '</div>';
         }
 
-        function rowStyle(row, index) {
+        function rowStyle(row, constraint) {
             return { classes: "table-info" };
             // if(row.actionCode === 0)
             //     return { classes: "table-primary" };
