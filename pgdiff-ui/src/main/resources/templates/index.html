@@ -235,9 +235,12 @@
         dest.setShowPrintMargin(false);
         dest.setReadOnly(true);
 
-        source.on("scroll", function(delta){
-            // delta.start, delta.end, delta.lines, delta.action
-            console.log(delta)
+        source.session.on("changeScrollTop", function(delta){
+            dest.session.setScrollTop(delta);
+        });
+
+        dest.session.on("changeScrollTop", function(delta){
+            source.session.setScrollTop(delta);
         });
 
 

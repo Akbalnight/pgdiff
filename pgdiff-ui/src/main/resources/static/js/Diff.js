@@ -69,16 +69,16 @@ $('#findDiff').click(function () {
 
 function getDestDdl(ddl, countPrefixLine, countSuffixLine){
     // console.log("ddl: ", ddl);
-    console.log("countPrefixLine: ", countPrefixLine);
-    console.log("countSuffixLine: ", countSuffixLine);
+    // console.log("countPrefixLine: ", countPrefixLine);
+    // console.log("countSuffixLine: ", countSuffixLine);
 
     var resDDL = "";
 
-    for(var i = 0; i < countPrefixLine; i++) resDDL += countPrefixLine + "\n";
+    for(var i = 0; i < countPrefixLine; i++) resDDL += "\n";
 
     resDDL += ddl !== "" ? ddl + "\n" : "";
 
-    for(var i = 0; i < countSuffixLine; i++) resDDL += countSuffixLine + "\n";
+    for(var i = 0; i < countSuffixLine; i++) resDDL += "\n";
 
     return resDDL;
 }
