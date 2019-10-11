@@ -12,11 +12,11 @@ public class CompareInterface<T> {
 
     public boolean compare(T ci) { return false;}
 
-    public String getCreate() { return ""; }
+    public String getCreate() { return null; }
 
-    public String getAdd(String destinationSchema) { return ""; }
+    public Alter getAdd(String destinationSchema) { return null; }
 
-    public String getDrop(String destinationSchema) { return ""; }
+    public Alter getDrop(String destinationSchema) { return null; }
 
-    public List<String> getChange(T ci) { return new ArrayList<>(); }
+    public List<Alter> getChange(T ci) { return new ArrayList<>(); }
 }

@@ -122,11 +122,15 @@
                             <input type="checkbox" class="custom-control-input" id="withPartitions">
                             <label class="custom-control-label" for="withPartitions">With partitions</label>
                         </div>
+                        <div class="col-2 custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="withDDL">
+                            <label class="custom-control-label" for="withDDL">With DDL</label>
+                        </div>
                         <!--<span class="col-2 text-center" id="resultDiff"></span>-->
                         <div class="col-2">
                             <button id="findDiff" class="btn btn-info btn-sm btn-block rounded-pill">Find diff</button>
                         </div>
-                        <div class="col-4"></div>
+                        <div class="col-2"></div>
                         <div class="col-2 pr-0">
                             <div class="d-flex flex-row justify-content-end">
                                 <div class="mr-1">
@@ -149,7 +153,7 @@
         </div>
 
 
-        <div id="tableDiffContainer" class="border border-info m-2 bg-light rounded" style="height: calc(100vh - 275px)">
+        <div id="tableDiffContainer" class="border border-info m-2 bg-light rounded">
 
             <div id="source"></div>
             <div id="dest"></div>
@@ -195,6 +199,7 @@
     </div>
 
     <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/jquery.splitter.js"></script>
     <script src="/bootstrap-4.3.1/js/bootstrap.bundle.js"></script>
     <script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>
     <script src="/js/FileSaver.min.js"></script>
@@ -212,6 +217,7 @@
 
         $( document ).ready(function() {
             resizeTableDiff();
+            $("#tableDiffContainer").splitter();
         });
         $( window ).resize(function() { resizeTableDiff(); });
 
@@ -241,6 +247,14 @@
 
         dest.session.on("changeScrollTop", function(delta){
             source.session.setScrollTop(delta);
+        });
+
+        source.session.on("changeScrollLeft", function(delta){
+            dest.session.setScrollLeft(delta);
+        });
+
+        dest.session.on("changeScrollLeft", function(delta){
+            source.session.setScrollLeft(delta);
         });
 
 

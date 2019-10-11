@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,18 +93,33 @@ public class CompareService {
                         result.setNameTableTwo(tableTwo.getTableName());
                         result.setDdlTableTwo(tableTwo.getDDL(destinationSchema));
 
-                        result.setAlters(
+//                        result.setAlters(
+//                            doDiff(
+//                                new ArrayList<>(tableOne.getColumns()),
+//                                new ArrayList<>(tableTwo.getColumns()),
+//                                destinationSchema));
+//
+//                        result.addAllAlters(
+//                            doDiff(
+//                                    new ArrayList<>(tableOne.getConstraints()),
+//                                    new ArrayList<>(tableTwo.getConstraints()),
+//                                    destinationSchema)
+//                        );
+
+                        List<Alter> diffs =
                             doDiff(
                                 new ArrayList<>(tableOne.getColumns()),
                                 new ArrayList<>(tableTwo.getColumns()),
-                                destinationSchema));
-
-                        result.addAllAlters(
-                            doDiff(
+                                destinationSchema);
+                        diffs.addAll(
+                                doDiff(
                                     new ArrayList<>(tableOne.getConstraints()),
                                     new ArrayList<>(tableTwo.getConstraints()),
-                                    destinationSchema)
-                        );
+                                    destinationSchema));
+
+                        List<Alter> sorted = diffs.stream().sorted(Comparator.comparing(Alter::getAlterType)).collect(Collectors.toList());
+
+                        result.setAlters(sorted.stream().map(Alter::getAlter).collect(Collectors.toList()));
 
                         if(result.getAlters() != null && result.getAlters().size() > 0) result.setResultCode(1);
                         else result.setResultCode(-1);
@@ -161,9 +177,9 @@ public class CompareService {
     }
 
 
-    private List<String> doDiff(List<CompareInterface> compareObjectOne, List<CompareInterface> compareObjectTwo, String destinationSchema){
+    private List<Alter> doDiff(List<CompareInterface> compareObjectOne, List<CompareInterface> compareObjectTwo, String destinationSchema){
 
-        List<String> sql = new ArrayList<>();
+        List<Alter> sql = new ArrayList<>();
 
         // Хранит результат сравнения
         Boolean compareVal;

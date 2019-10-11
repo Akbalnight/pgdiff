@@ -44,40 +44,52 @@ public class Column extends CompareInterface<Column>{
         return getAddSql();
     }
 
-    public String getAdd(String schema) {
-        return String.format("ALTER TABLE %s.%s ADD COLUMN %s", schema, this.getTableName(), getAddSql());
+    public Alter getAdd(String schema) {
+        return new Alter(3, String.format("ALTER TABLE %s.%s ADD COLUMN %s", schema, this.getTableName(), getAddSql()));
     }
 
-    public String getDrop(String destinationSchema) {
-        return String.format("ALTER TABLE %s.%s DROP COLUMN IF EXISTS %s;", destinationSchema, this.getTableName(), this.getColumnName());
+    public Alter getDrop(String destinationSchema) {
+        return new Alter(1, String.format("ALTER TABLE %s.%s DROP COLUMN IF EXISTS %s;", destinationSchema, this.getTableName(), this.getColumnName()));
     }
 
-    public List<String> getChange(Column column) {
+    public List<Alter> getChange(Column column) {
 //        String sql = "";
-        List<String> sql = new ArrayList<>();
+        List<Alter> sql = new ArrayList<>();
 
         // Code and test a column change from integer to bigint
         if (!this.getDataType().equals(column.getDataType())) {
-            sql.add(String.format("-- WARNING: Это изменение типа может не сработать: (%s to %s).", column.getDataType(), this.getDataType()));
-            sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s TYPE %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getDataType()));
+            sql.add(
+                new Alter( 2,
+                    String.format("-- WARNING: Это изменение типа может не сработать: (%s to %s).", column.getDataType(), this.getDataType())));
+            sql.add(
+                new Alter( 2,
+                    String.format("ALTER TABLE %s.%s ALTER COLUMN %s TYPE %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getDataType())));
         }
 
         // Detect column default change (or added, dropped)
         if (this.getColumnDefault() == null) {
             if (column.getColumnDefault() != null) {
-                sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP DEFAULT;", column.getTableSchema(), this.getTableName(), this.getColumnName()));
+                sql.add(
+                    new Alter( 2,
+                        String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP DEFAULT;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             }
         } else if (!this.getColumnDefault().equals(column.getColumnDefault())) {
-            sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET DEFAULT %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getColumnDefault()));
+            sql.add(
+                new Alter( 2,
+                    String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET DEFAULT %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getColumnDefault())));
         }
 
 
         // Detect not-null and nullable change
         if (!this.getIsNullable().equals(column.getIsNullable())) {
             if (this.getIsNullable().equals("NULL")) {
-                sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName()));
+                sql.add(
+                    new Alter( 2,
+                        String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             } else {
-                sql.add(String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName()));
+                sql.add(
+                    new Alter( 2,
+                        String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             }
         } else {
         }

@@ -13,25 +13,35 @@ $('#findDiff').click(function () {
 
     requestAPI("/find-diff", data_req)
         .then(response => {
-            console.log(response);
+            // console.log(response);
             // $('#tableDiff').bootstrapTable('hideLoading');
             // $('#tableDiff').bootstrapTable('load', response);
             // $('#tableDiff').bootstrapTable('filterBy', { resultCode: [0, 1, 4] })
             // $('#tableDiff').bootstrapTable('expandAllRows');
             var sourceSql = [];
             var destSql = [];
+            var withDDL = $('#withDDL').is(':checked');
 
             for(var i = 0; i <  response.length; i++){
                 var row = response[i];
 
                 if(row.resultCode !== -1) {
 
-                    var ddl = row.resultCode === 0 ? "\n" + row.ddlTableOne : '';
-                    var alters = row.alters ? "\n" + row.alters.join('\n') : '';
+                    var altersSrt = row.alters ? row.alters.join('\n') + "\n" : "";
+                    var altersLen = row.alters ? row.alters.length : 0;
 
+                    var ddlOne;
+                    var ddlTwo;
+                    if(withDDL){
+                        ddlOne = row.ddlTableOne ? row.ddlTableOne : "";
+                        ddlTwo = row.ddlTableTwo ? row.ddlTableTwo : "";
+                    }else {
+                        ddlOne = row.resultCode === 0 ? row.ddlTableOne : "";
+                        ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
+                    }
 
-                    var ddlOneLen = row.ddlTableOne ? row.ddlTableOne.split('\n').length : 0;
-                    var ddlTwoLen = row.ddlTableTwo ? row.ddlTableTwo.split('\n').length : 0;
+                    var ddlOneLen = ddlOne !== "" ? ddlOne.split('\n').length : 0;
+                    var ddlTwoLen = ddlTwo !== "" ? ddlTwo.split('\n').length : 0;
 
                     var ddlOneOffset = 0;
                     var ddlTwoOffset = 0;
@@ -39,17 +49,20 @@ $('#findDiff').click(function () {
                     if(ddlOneLen > ddlTwoLen) ddlTwoOffset = ddlOneLen - ddlTwoLen;
                     else ddlOneOffset = ddlTwoLen - ddlOneLen;
 
-                    sourceSql.push("-- Source: " + row.nameTableOne + "" +
-                        "\n-- Destination: " + row.nameTableTwo +
-                        "\n" + getDestDdl(row.ddlTableOne, 0, ddlOneOffset) +
-                        alters + "\n\n");
+                    sourceSql.push(
+                        "-- TABLE NAME: " + (row.nameTableOne ? row.nameTableOne : row.nameTableTwo) +
+                        "\n" + getDestDdl(ddlOne, 0, ddlOneOffset) +
+                        altersSrt + "\n\n");
 
-
-                    destSql.push(getDestDdl( row.ddlTableTwo ? row.ddlTableTwo : "", 2, row.alters ? row.alters.length + ddlTwoOffset + 2 : ddlTwoOffset + 2));
+                    // console.log("ddl: ", ddl);
+                    // console.log("ddlTwoOffset: ", ddlTwoOffset);
+                    // console.log("altersLen: ", altersLen);
+                    ddlTwoOffset += altersLen + 2;
+                    destSql.push(getDestDdl( ddlTwo, 1, ddlTwoOffset));
                 }
             }
-            source.setValue(sourceSql.join(''));
-            dest.setValue(destSql.join(''));
+            source.session.setValue(sourceSql.join(""));
+            dest.session.setValue(destSql.join(""));
 
 
 
@@ -59,9 +72,8 @@ $('#findDiff').click(function () {
             // editor.setValue(selectSql.join('')); // задаем
         })
         .catch(error => {
-            $('#resultDiff').html(error.msg).css({color: "red"})
-
-            $('#tableDiff').bootstrapTable('hideLoading')
+            // $('#resultDiff').html(error.msg).css({color: "red"})
+            // $('#tableDiff').bootstrapTable('hideLoading')
             console.log(error);
         });
 
@@ -74,11 +86,11 @@ function getDestDdl(ddl, countPrefixLine, countSuffixLine){
 
     var resDDL = "";
 
-    for(var i = 0; i < countPrefixLine; i++) resDDL += "\n";
+    for(var i = 0; i < countPrefixLine; i++) resDDL += "-\n";
 
     resDDL += ddl !== "" ? ddl + "\n" : "";
 
-    for(var i = 0; i < countSuffixLine; i++) resDDL += "\n";
+    for(var i = 0; i < countSuffixLine; i++) resDDL += "-\n";
 
     return resDDL;
 }

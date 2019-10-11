@@ -12,6 +12,7 @@
 }
 
 #tableDiffContainer {
+    height: calc(100vh - 250px);
     position: relative;
     display: flex;
 }
@@ -76,4 +77,9 @@ td {
 }
 [id^="rowNum"]{
     height: 100px;
+}
+
+.vsplitbar {
+    width: 4px;
+    background: red;
 }
