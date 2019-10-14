@@ -37,7 +37,8 @@ $('#findDiff').click(function () {
                         ddlTwo = row.ddlTableTwo ? row.ddlTableTwo : "";
                     }else {
                         ddlOne = row.resultCode === 0 ? row.ddlTableOne : "";
-                        ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
+                        // ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
+                        ddlTwo = "";
                     }
 
                     var ddlOneLen = ddlOne !== "" ? ddlOne.split('\n').length : 0;
@@ -118,7 +119,8 @@ $('#copyDiff').click(function () {
 });
 
 $('#exportDiff').click(function () {
-    var blob = new Blob(getSelectRowsSql(), {type: "application/sql;charset=utf-8"});
+    // console.log(source.session.getValue());
+    var blob = new Blob([source.session.getValue()], {type: "application/sql;charset=utf-8"});
     module$FileSaver.saveAs(blob, "export.sql");
 });
 

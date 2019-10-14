@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -145,8 +143,8 @@ public class CompareService {
                             null,
                             tableTwo.getTableName(),
                             null,
-                            tableTwo.getDrop(destinationSchema),
-                            null,
+                            tableTwo.getDDL(destinationSchema),
+                            Arrays.asList(tableTwo.getDrop(destinationSchema)),
                             4));
 //                log.info(tableTwo.getDrop(destinationSchema));
             }

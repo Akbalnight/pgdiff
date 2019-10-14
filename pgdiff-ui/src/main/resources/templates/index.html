@@ -9,10 +9,12 @@
     <!--<link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>-->
     <!--<link rel="stylesheet" th:href="@{webjars/bootstrap-table/1.9.1/bootstrap-table.css}"/>-->
 
-    <link rel="stylesheet" href="/css/w3.css"/>
+    <!--<link rel="stylesheet" href="/css/w3.css"/>-->
+
     <link rel="stylesheet" th:href="@{/bootstrap-4.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/bootstrap-table-1.15.4/bootstrap-table.min.css}"/>
     <link rel="stylesheet" th:href="@{/font-awesome-4.7.0/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" href="/jquery-splitter/css/jquery.splitter.css"/>
     <link rel="stylesheet" href="/css/main.css"/>
 
 </head>
@@ -22,7 +24,7 @@
         <div class="container">
             <div class="row my-2">
                 <div class="col">
-                    <div class="row border border-info px-3 py-2 mx-0 bg-light rounded">
+                    <div class="row border border-green px-3 py-2 mx-0 bg-light rounded">
                         <div class="col-2 pl-0">
                             <div class="">
                                 <select id="ddd" class="custom-select custom-select-sm rounded-pill">
@@ -37,7 +39,7 @@
             </div>
             <div class="row mb-2">
                 <div class="col-sm pr-1">
-                    <div class="border border-info px-2 py-2 bg-light rounded">
+                    <div class="border border-green px-2 py-2 bg-light rounded">
                         <div class="row">
                             <h5 class="col-8">Source server</h5>
                             <span class="col-4" id="resultConnect1"></span>
@@ -64,13 +66,13 @@
                                 <input id="password1" value="postgres" class="form-control form-control-sm rounded-pill" type="password" placeholder="Password">
                             </div>
                             <div class="col-4">
-                                <button id="ConnOne" class="btn btn-outline-info btn-sm btn-block rounded-pill">Test connection</button>
+                                <button id="ConnOne" class="btn btn-outline-custom btn-sm btn-block rounded-pill">Test connection</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm pl-1">
-                    <div class="border border-info px-2 py-2 bg-light rounded">
+                    <div class="border border-green px-2 py-2 bg-light rounded">
                         <div class="row">
                             <h5 class="col-8">Destination server</h5>
                             <span class="col-4" id="resultConnect2"></span>
@@ -97,7 +99,7 @@
                                 <input id="password2" value="postgres" class="form-control form-control-sm rounded-pill" type="password" placeholder="Password">
                             </div>
                             <div class="col-4">
-                                <button id="ConnTwo" class="btn btn-outline-info btn-sm btn-block rounded-pill">Test connection</button>
+                                <button id="ConnTwo" class="btn btn-outline-custom btn-sm btn-block rounded-pill">Test connection</button>
                             </div>
                         </div>
                     </div>
@@ -106,7 +108,7 @@
 
             <div class="row mb-2">
                 <div class="col">
-                    <div class="row border border-info px-2 py-2 mx-0 bg-light rounded">
+                    <div class="row border border-green px-2 py-2 mx-0 bg-light rounded">
                         <div class="col-2 pl-0">
                             <div class="">
                                 <select id="operation" class="custom-select custom-select-sm rounded-pill">
@@ -128,7 +130,7 @@
                         </div>
                         <!--<span class="col-2 text-center" id="resultDiff"></span>-->
                         <div class="col-2">
-                            <button id="findDiff" class="btn btn-info btn-sm btn-block rounded-pill">Find diff</button>
+                            <button id="findDiff" class="btn btn-custom btn-sm btn-block rounded-pill">Find diff</button>
                         </div>
                         <div class="col-2"></div>
                         <div class="col-2 pr-0">
@@ -137,13 +139,13 @@
                                     <button id="copyDiff" type="button"
                                             data-toggle="tooltip"
                                             data-placement="top" title="Copy to clipboard"
-                                            class="btn btn-info btn-sm btn-block rounded-left"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+                                            class="btn btn-custom btn-sm btn-block rounded-left"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
                                 </div>
                                 <div class="">
                                     <button id="exportDiff" type="button"
                                             data-toggle="tooltip"
                                             data-placement="top" title="Export to SQL"
-                                            class="btn btn-success btn-sm btn-block rounded-right"><i class="fa fa-external-link" aria-hidden="true"></i></button>
+                                            class="btn btn-custom btn-sm btn-block rounded-right"><i class="fa fa-external-link" aria-hidden="true"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -153,7 +155,7 @@
         </div>
 
 
-        <div id="tableDiffContainer" class="border border-info m-2 bg-light rounded">
+        <div id="tableDiffContainer" class="border border-green m-2 bg-light rounded">
 
             <div id="source"></div>
             <div id="dest"></div>
@@ -199,11 +201,11 @@
     </div>
 
     <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/jquery.splitter.js"></script>
+    <script src="/jquery-splitter/js/jquery.splitter-0.14.0.js"></script>
     <script src="/bootstrap-4.3.1/js/bootstrap.bundle.js"></script>
     <script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>
     <script src="/js/FileSaver.min.js"></script>
-    <script src="/js/w3codecolor.js"></script>
+    <!--<script src="/js/w3codecolor.js"></script>-->
     <script src="/ace/ace.js"></script>
 
 
@@ -213,18 +215,26 @@
 
     <script>
         $('.toast').toast( {delay: 1000} )
-        w3CodeColor();
+        // w3CodeColor();
 
         $( document ).ready(function() {
             resizeTableDiff();
-            $("#tableDiffContainer").splitter();
+            // $("#tableDiffContainer").splitter();
+            var splitter = $('#tableDiffContainer').split({
+                orientation: 'vertical',
+                limit: 100,
+                percent: false,// if there is no percentage it interpret it as pixels
+                onDrag: function(event) {
+                    // console.log(splitter.position());
+                }
+            });
         });
         $( window ).resize(function() { resizeTableDiff(); });
 
         function resizeTableDiff() {
             $('#tableDiff').bootstrapTable('refreshOptions', { height:$('#tableDiffContainer').height() - 5 })
             $('#tableDiff').bootstrapTable('expandAllRows');
-            w3CodeColor();
+            // w3CodeColor();
         }
 
         $(function () {
