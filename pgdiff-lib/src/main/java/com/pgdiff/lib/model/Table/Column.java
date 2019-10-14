@@ -1,5 +1,7 @@
-package com.pgdiff.lib.model;
+package com.pgdiff.lib.model.Table;
 
+import com.pgdiff.lib.model.Alter;
+import com.pgdiff.lib.model.CompareInterface;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Column extends CompareInterface<Column>{
+public class Column extends CompareInterface<Column> {
 
     String tableSchema;
     String compareName;

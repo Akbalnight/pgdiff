@@ -19,6 +19,7 @@ public class Alter {
      * 2 - change column
      * 3 - add column
      * 4 - add constraint
+     * 5 - comment on
      * */
     Integer alterType;
     String alter;

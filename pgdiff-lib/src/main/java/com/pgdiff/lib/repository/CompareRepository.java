@@ -1,6 +1,9 @@
 package com.pgdiff.lib.repository;
 
 import com.pgdiff.lib.model.*;
+import com.pgdiff.lib.model.Table.Column;
+import com.pgdiff.lib.model.Table.Constraint;
+import com.pgdiff.lib.model.Table.Table;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

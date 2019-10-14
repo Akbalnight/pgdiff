@@ -1,4 +1,4 @@
-package com.pgdiff.lib.model;
+package com.pgdiff.lib.model.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

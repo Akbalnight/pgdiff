@@ -2,13 +2,15 @@ package com.pgdiff.lib.service;
 
 import com.pgdiff.lib.config.DataSourceManager;
 import com.pgdiff.lib.model.*;
+import com.pgdiff.lib.model.Table.Column;
+import com.pgdiff.lib.model.Table.Constraint;
+import com.pgdiff.lib.model.Table.Table;
 import com.pgdiff.lib.repository.CompareRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,8 @@
-package com.pgdiff.lib.model;
+package com.pgdiff.lib.model.Table;
 
 
+import com.pgdiff.lib.model.Alter;
+import com.pgdiff.lib.model.CompareInterface;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +15,7 @@ import java.util.List;
 @Setter
 @Log4j2
 @NoArgsConstructor
-public class Constraint extends CompareInterface<Constraint>{
+public class Constraint extends CompareInterface<Constraint> {
     String compareName;
     String schemaName;
     String tableName;

@@ -64,10 +64,10 @@ public class SqlSchema {
 
 //            "SELECT table_schema \n" +
 //            "    , table_name AS compare_name\n" +
-//            "\t, table_name\n" +
+//            "    , table_name\n" +
 //            "    , CASE table_type \n" +
-//            "\t  WHEN 'BASE TABLE' THEN 'TABLE' \n" +
-//            "\t  ELSE table_type END AS table_type\n" +
+//            "      WHEN 'BASE TABLE' THEN 'TABLE' \n" +
+//            "      ELSE table_type END AS table_type\n" +
 //            "    , is_insertable_into\n" +
 //            "FROM information_schema.tables \n" +
 //            "WHERE table_type = 'BASE TABLE'\n" +
@@ -145,16 +145,38 @@ public class SqlSchema {
 //            "%s "+
 //            "ORDER BY c.relname, con.contype;";
 
-    public final static String SqlForeignKeySchema = "" +
-        "SELECT c.relname || '.' || cn.conname AS compare_name\n" +
-            "    , ns.nspname AS schema_name\n" +
-            "    , c.relname AS table_name\n" +
-            "    , cn.conname AS fk_name\n" +
-            "    , pg_catalog.pg_get_constraintdef(cn.oid, true) as constraint_def\n" +
-            "FROM pg_catalog.pg_constraint cn\n" +
-            "INNER JOIN pg_class AS c ON (cn.conrelid = c.oid)\n" +
-            "INNER JOIN pg_namespace AS ns ON (ns.oid = cn.connamespace)\n" +
-            "WHERE cn.contype = 'f'\n" +
-            "AND ns.nspname = :schema\n" +
-            "%s ";
+    public final static String SqlTableComment = "" +
+            "with \n" +
+            "t as ( \n" +
+            "    select relname,\n" +
+            "        relnamespace, \n" +
+            "        case relkind \n" +
+            "            when 'r' then 'TABLE'\n" +
+            "            when 'f' then 'FOREIGN TABLE'\n" +
+            "            when 'i' then 'INDEX'\n" +
+            "            when 'S' then 'SEQUENCE'\n" +
+            "            when 'v' then 'VIEW'\n" +
+            "            when 'm' then 'MATERIALIZED VIEW'\n" +
+            "        end relkind,\n" +
+            "        obj_description(oid, 'pg_class') as description \n" +
+            "    from pg_class\n" +
+            "),\n" +
+            "t1 as (\n" +
+            "    select relnamespace as relnamespace,\n" +
+            "        relname as relname,\n" +
+            "        relkind as relkind,\n" +
+            "        description as description\n" +
+            "    from t where relnamespace = :schema::regnamespace::oid\n" +
+            ")\n" +
+            "select \n" +
+            "    c.relname || '.' || c.relkind || '.' || c.description as compare_name,\n" +
+            "    c.relname as tableName,\n" +
+            "    c.relkind as typ,\n" +
+            "    c.description\n" +
+            "from t1 c\n" +
+            "where 1=1\n" +
+            "%s";
+
+
+
 }
