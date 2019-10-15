@@ -1,7 +1,7 @@
 $('#findDiff').click(function () {
 
     // $('#resultDiff').html(getConnectSpinner());
-    $('#tableDiff').bootstrapTable('showLoading')
+    // $('#tableDiff').bootstrapTable('showLoading')
 
     var data_req = {
         databaseSettingsOne: getOneConnect(),
@@ -14,70 +14,54 @@ $('#findDiff').click(function () {
 
     requestAPI("/find-diff", data_req)
         .then(response => {
-            // console.log(response);
-            // $('#tableDiff').bootstrapTable('hideLoading');
-            // $('#tableDiff').bootstrapTable('load', response);
-            // $('#tableDiff').bootstrapTable('filterBy', { resultCode: [0, 1, 4] })
-            // $('#tableDiff').bootstrapTable('expandAllRows');
 
             var sourceSql = [];
             var destSql = [];
-            var withDDL = $('#withDDL').is(':checked');
+
+            sourceSql.push("--- --- --- Pg Diff --- --- ---");
+            destSql.push("--- --- --- --- --- ---");
+            // sourceSql.push("--- --- --- This diff between {0}:{1}/{2} and --- --- --- >".format([$('#host1').val(), $('#port1').val(), $('#dbname1').val()]));
+            // destSql.push("< --- --- --- {0}:{1}/{2} --- --- ---".format([$('#host2').val(), $('#port2').val(), $('#dbname2').val()]));
+
+            var lastObjectName = "";
 
             for(var i = 0; i <  response.length; i++){
                 var row = response[i];
+                var headGroup = "";
+                var headGroupLen = 0;
 
-                    sourceSql.push(
-                        "-- TABLE NAME: " + (row.nameTableOne ? row.nameTableOne : row.nameTableTwo) +
-                        "\n" + getDestDdl(ddlOne, 0, ddlOneOffset) +
-                        altersSrt + "\n\n");
+                if(lastObjectName === row.objectName) {
+                    headGroup = "";
+                    headGroupLen = 0;
+                }
+                else {
+                    lastObjectName = row.objectName;
+                    headGroup = "\n\n--- Object name: " + lastObjectName + "\n";
+                    headGroupLen = 3;
+                }
 
-                // if(row.resultCode !== -1) {
-                //
-                //     var altersSrt = row.alters ? row.alters.join('\n') + "\n" : "";
-                //     var altersLen = row.alters ? row.alters.length : 0;
-                //
-                //     var ddlOne;
-                //     var ddlTwo;
-                //     if(withDDL){
-                //         ddlOne = row.ddlTableOne ? row.ddlTableOne : "";
-                //         ddlTwo = row.ddlTableTwo ? row.ddlTableTwo : "";
-                //     }else {
-                //         ddlOne = row.resultCode === 0 ? row.ddlTableOne : "";
-                //         // ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
-                //         ddlTwo = "";
-                //     }
-                //
-                //     var ddlOneLen = ddlOne !== "" ? ddlOne.split('\n').length : 0;
-                //     var ddlTwoLen = ddlTwo !== "" ? ddlTwo.split('\n').length : 0;
-                //
-                //     var ddlOneOffset = 0;
-                //     var ddlTwoOffset = 0;
-                //
-                //     if(ddlOneLen > ddlTwoLen) ddlTwoOffset = ddlOneLen - ddlTwoLen;
-                //     else ddlOneOffset = ddlTwoLen - ddlOneLen;
-                //
-                //     sourceSql.push(
-                //         "-- TABLE NAME: " + (row.nameTableOne ? row.nameTableOne : row.nameTableTwo) +
-                //         "\n" + getDestDdl(ddlOne, 0, ddlOneOffset) +
-                //         altersSrt + "\n\n");
-                //
-                //     // console.log("ddl: ", ddl);
-                //     // console.log("ddlTwoOffset: ", ddlTwoOffset);
-                //     // console.log("altersLen: ", altersLen);
-                //     ddlTwoOffset += altersLen + 2;
-                //     destSql.push(getDestDdl( ddlTwo, 1, ddlTwoOffset));
-                // }
+                var alter    = row.alter ? row.alter : "";
+                var subAlter = row.subAlter ? row.subAlter : "";
+
+                var alterLen    = alter !== "" ? alter.split('\n').length : 0;
+                var subAlterLen = subAlter !== "" ? subAlter.split('\n').length : 0;
+
+                var alterOffset = 0;
+                var subAlterOffset = 0;
+
+                if(alterLen > subAlterLen)
+                    subAlterOffset = alterLen - subAlterLen;
+                else
+                    alterOffset = subAlterLen - alterLen;
+
+
+                sourceSql.push(headGroup + getAlterWithOffset(alter, 0, alterOffset));
+                destSql.push(getAlterWithOffset(subAlter, headGroupLen, subAlterOffset));
+
             }
             source.session.setValue(sourceSql.join(""));
             dest.session.setValue(destSql.join(""));
 
-
-
-
-            // w3CodeColor();
-
-            // editor.setValue(selectSql.join('')); // задаем
         })
         .catch(error => {
             // $('#resultDiff').html(error.msg).css({color: "red"})
@@ -87,10 +71,7 @@ $('#findDiff').click(function () {
 
 })
 
-function getDestDdl(ddl, countPrefixLine, countSuffixLine){
-    // console.log("ddl: ", ddl);
-    // console.log("countPrefixLine: ", countPrefixLine);
-    // console.log("countSuffixLine: ", countSuffixLine);
+function getAlterWithOffset(ddl, countPrefixLine, countSuffixLine){
 
     var resDDL = "";
 
@@ -132,7 +113,7 @@ $('#exportDiff').click(function () {
 });
 
 function getSelectRowsSql() {
-    var selectRows = $('#tableDiff').bootstrapTable('getSelections')
+    // var selectRows = $('#tableDiff').bootstrapTable('getSelections')
     var selectSql = [];
     selectRows.forEach(function(item, i) {
         // console.log(item);

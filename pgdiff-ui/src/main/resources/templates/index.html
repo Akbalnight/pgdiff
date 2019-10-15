@@ -4,15 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Pg Diff v2</title>
-
-    <!--<link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>-->
-    <!--<link rel="stylesheet" th:href="@{webjars/bootstrap-table/1.9.1/bootstrap-table.css}"/>-->
-
-    <!--<link rel="stylesheet" href="/css/w3.css"/>-->
+    <title>Pg Diff</title>
 
     <link rel="stylesheet" th:href="@{/bootstrap-4.3.1/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/bootstrap-table-1.15.4/bootstrap-table.min.css}"/>
+    <!--<link rel="stylesheet" th:href="@{/bootstrap-table-1.15.4/bootstrap-table.min.css}"/>-->
     <link rel="stylesheet" th:href="@{/font-awesome-4.7.0/css/font-awesome.min.css}"/>
     <link rel="stylesheet" href="/jquery-splitter/css/jquery.splitter.css"/>
     <link rel="stylesheet" href="/css/main.css"/>
@@ -201,7 +196,7 @@
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/jquery-splitter/js/jquery.splitter-0.14.0.js"></script>
     <script src="/bootstrap-4.3.1/js/bootstrap.bundle.js"></script>
-    <script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>
+    <!--<script src="/bootstrap-table-1.15.4/bootstrap-table.js"></script>-->
     <script src="/js/FileSaver.min.js"></script>
     <!--<script src="/js/w3codecolor.js"></script>-->
     <script src="/ace/ace.js"></script>
@@ -212,32 +207,22 @@
     <script src="/js/Diff.js"></script>
 
     <script>
-        $('.toast').toast( {delay: 1000} )
-        // w3CodeColor();
-
         $( document ).ready(function() {
-            resizeTableDiff();
-            // $("#tableDiffContainer").splitter();
-            var splitter = $('#tableDiffContainer').split({
+            // resizeTableDiff();
+            $('.toast').toast( {delay: 1000} )
+            $('[data-toggle="tooltip"]').tooltip()
+            $('#tableDiffContainer').split({
                 orientation: 'vertical',
                 limit: 100,
-                percent: false,// if there is no percentage it interpret it as pixels
-                onDrag: function(event) {
-                    // console.log(splitter.position());
-                }
+                percent: false,
             });
         });
-        $( window ).resize(function() { resizeTableDiff(); });
-
-        function resizeTableDiff() {
-            $('#tableDiff').bootstrapTable('refreshOptions', { height:$('#tableDiffContainer').height() - 5 })
-            $('#tableDiff').bootstrapTable('expandAllRows');
-            // w3CodeColor();
-        }
-
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        // $( window ).resize(function() { resizeTableDiff(); });
+        //
+        // function resizeTableDiff() {
+        //     $('#tableDiff').bootstrapTable('refreshOptions', { height:$('#tableDiffContainer').height() - 5 })
+        //     $('#tableDiff').bootstrapTable('expandAllRows');
+        // }
 
         var source = ace.edit('source');
         source.getSession().setMode("ace/mode/sql");
@@ -264,68 +249,6 @@
         dest.session.on("changeScrollLeft", function(delta){
             source.session.setScrollLeft(delta);
         });
-
-
-
-
-        function detailFormatter(i, row) {
-            var html = []; //row.ddlTableOne.split('\n');
-
-            // if(row.alters) {
-            //     row.alters.forEach(function (value, constraint) {
-            //         html.push('<div class="sqlHigh">' + value + '</div>');
-            //     })
-            // }
-
-            // return '<div class="w3-code m-0 w3-small">' + html.join('') + '</div>';
-
-            // return '<div>' +
-            //     '   <div class="w3-code m-0 w3-small d-flex">' +
-            //     '       <pre class="sqlHigh" style="flex-basis: 53%;">'+ row.ddlTableOne +'</pre>' +
-            //     '       <pre class="sqlHigh">'+ (row.ddlTableTwo !== null ? row.ddlTableTwo : 'N/A') +'</pre>' +
-            //     '   </div>' +
-            //     '   <div class="w3-code m-0 w3-small">' + html.join('') + '</div>' +
-            //     '</div>';
-
-
-
-            // if(row.alters) {
-            //     row.alters.forEach(function (value, constraint) {
-            //         html.push();
-            //     })
-            // }
-
-            // var selectSql = [];
-            // // response.forEach(function(item, i) {
-            //     // console.log(item);
-            //     // selectSql.push("-- Source: " + item.source +" \n-- Destination: " + item.destination + "\n" + item.action+"\n\n");
-            //
-            //     if(row.resultCode !== -1) {
-            //         var ddl = row.resultCode === 0 ? "\n" + row.ddlTableOne : '';
-            //         var columns = row.alters ? "\n" + row.alters.join('\n') : '';
-            //
-            //         selectSql.push("-- Source: " + row.nameTableOne + " \n-- Destination: " + row.nameTableTwo + ddl + columns + "\n\n");
-            //     }
-            // // });
-
-
-            // return '<div id="rowNum' + i + '">' + selectSql.join(''); + '</div>';
-
-            return '<div id="rowNum' + i + '"></div>';;
-
-
-        }
-
-        function rowStyle(row, i) {
-            //
-            return { classes: "table-info" };
-            // if(row.actionCode === 0)
-            //     return { classes: "table-primary" };
-            // else if(row.actionCode === 1)
-            //     return { classes: "table-success" };
-            // else if(row.actionCode === -1)
-            //     return { classes: "table-danger" };
-        }
     </script>
 </body>
 </html>

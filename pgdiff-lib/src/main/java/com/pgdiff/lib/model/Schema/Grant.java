@@ -33,7 +33,7 @@ public class Grant extends CommonSchema<Grant> {
 
     public Alter getAdd(String destinationSchema) {
         return this.getGrants() != null ?
-                new Alter(AlterType.ADD_GRANT,
+                new Alter(AlterType.ADD_GRANT, this.getRelationshipName(),
                         String.format("GRANT %s ON %s.%s TO %s;",
                                 this.getGrants(), destinationSchema, this.getRelationshipName(), this.getRole())) :
                 null;
@@ -41,7 +41,7 @@ public class Grant extends CommonSchema<Grant> {
 
     public Alter getDrop(String destinationSchema) {
         return this.getGrants() != null ?
-                new Alter(AlterType.DROP_GRANT,
+                new Alter(AlterType.DROP_GRANT, this.getRelationshipName(),
                         String.format("REVOKE %s ON %s.%s FROM %s;",
                                 this.getGrants(), destinationSchema, this.getRelationshipName(), this.getRole())) :
                 null;

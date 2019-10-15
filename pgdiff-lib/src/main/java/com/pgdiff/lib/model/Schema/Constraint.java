@@ -37,13 +37,13 @@ public class Constraint extends CommonSchema<Constraint> {
 
     public Alter getAdd(String destinationSchema) {
         return this.getConstraintDef() != null ?
-                new Alter(AlterType.ADD_CONSTRAINT, String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql())) :
+                new Alter(AlterType.ADD_CONSTRAINT, this.getTableName(), String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql())) :
                 null;
     }
 
     public Alter getDrop(String destinationSchema) {
         return this.getConstraintDef() != null ?
-                new Alter(AlterType.DROP_CONSTRAINT, String.format("ALTER TABLE %s.%s DROP CONSTRAINT %s CASCADE;", destinationSchema, this.getTableName(), this.getIndexName())) :
+                new Alter(AlterType.DROP_CONSTRAINT, this.getTableName(), String.format("ALTER TABLE %s.%s DROP CONSTRAINT %s CASCADE;", destinationSchema, this.getTableName(), this.getIndexName())) :
                 null;
     }
 

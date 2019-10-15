@@ -52,21 +52,19 @@ public class DiffService {
             // withTableDDL - вернуть резултат с кодами создания таблиц
             Boolean withTableDDL = compareRequest.getWithTableDDL();
 
-            // Поток операция
-//            Stream<String> operations = compareRequest.getOperations().stream();
+            List<String> operations = compareRequest.getOperations();
 
             List<Alter> results = new ArrayList<>();
 
-
-            if(compareRequest.getOperations().stream().anyMatch("TABLE"::equals)) {
+            if(operations.contains("TABLE")) {
                 List<Table> tablesOne = diffRepository.getTableList(dataSourceOne, sourceSchema, withPartitions);
                 List<Table> tablesTwo = diffRepository.getTableList(dataSourceTwo, destinationSchema, withPartitions);
                 results.addAll(doDiff( new ArrayList<>(tablesOne), new ArrayList<>(tablesTwo), destinationSchema, withTableDDL));
             }
 
-            if(compareRequest.getOperations().stream().anyMatch("GRANT"::equals)){
-                List<Grant> grantsOne = diffRepository.getGrantList(dataSourceOne, sourceSchema, withPartitions, new String[]{"r"});
-                List<Grant> grantsTwo = diffRepository.getGrantList(dataSourceTwo, destinationSchema, withPartitions, new String[]{"r"});
+            if(operations.contains("GRANT")){
+                List<Grant> grantsOne = diffRepository.getGrantList(dataSourceOne, sourceSchema, withPartitions, new String[]{"r", "v", "S", "f"});
+                List<Grant> grantsTwo = diffRepository.getGrantList(dataSourceTwo, destinationSchema, withPartitions, new String[]{"r", "v", "S", "f"});
                 results.addAll(
                     doDiff( new ArrayList<>(grantsOne), new ArrayList<>(grantsTwo), destinationSchema)
                         .stream().sorted(Comparator.comparing(Alter::getAlterType)).collect(Collectors.toList())
@@ -90,10 +88,6 @@ public class DiffService {
         // Хранит результат сравнения
         Boolean compareVal;
         for(CommonSchema rowOneObj : compareObjectOne){
-            if(rowOneObj.getClass() == Table.class && withTableDDL) {
-                log.info("Add DDL");
-                sql.add(((Table)rowOneObj).getCreate(destinationSchema));
-            }
             compareVal = false;
             for(CommonSchema rowTwoObj : compareObjectTwo){
                 compareVal = rowOneObj.compare(rowTwoObj);
@@ -102,7 +96,10 @@ public class DiffService {
 
                     // Для таблиц: Начало
                     if(rowOneObj.getClass() == Table.class){
-                        sql.add(((Table)rowTwoObj).getCreate(destinationSchema));
+                        // SET SUB DDL = ddl
+                        if(withTableDDL)
+                            sql.add(new Alter(AlterType.DDL_TABLE, ((Table)rowOneObj).getTableName(), ((Table)rowOneObj).getDDL(destinationSchema), ((Table)rowTwoObj).getDDL(destinationSchema)));
+
                         List<Alter> diffs;
                         diffs = doDiff(
                                     new ArrayList<>(((Table)rowOneObj).getColumns()),
@@ -123,12 +120,22 @@ public class DiffService {
                     break;
                 }
             }
-            if(!compareVal && !withTableDDL){
+            if(!compareVal){
+//                if(rowOneObj.getClass() == Table.class && withTableDDL)
+//                    sql.add(new Alter(AlterType.DDL_TABLE, ((Table)rowOneObj).getDDL(destinationSchema), null));
+//                else
                 sql.add(rowOneObj.getAdd(destinationSchema));
+
+                // SET SUB DDL = null
             }
         }
         for(CommonSchema rowTwoObj : compareObjectTwo){
+            if(rowTwoObj.getClass() == Table.class && withTableDDL)
+                sql.add(new Alter(AlterType.DDL_TABLE, ((Table)rowTwoObj).getTableName(), null, ((Table)rowTwoObj).getDDL(destinationSchema)));
+
             sql.add(rowTwoObj.getDrop(destinationSchema));
+            // SET MAIN DDL = null
+            // SET SUB DDL = ddl
         }
         return sql;
     }

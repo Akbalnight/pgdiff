@@ -45,18 +45,18 @@ public class Table extends CommonSchema<Table> {
             sql += String.join(",\n\t", columnSql);
             sql += "\n);";
         }else if (this.getTableType().equals("VIEW")){
-            sql = String.format("%s\n", getDrop(destinationSchema));
+            sql = String.format("%s\n", getDrop(destinationSchema).getAlter());
             sql += String.format("CREATE OR REPLACE %s %s.%s\n%s\n", this.getTableType(), destinationSchema, this.getTableName(), this.getViewSelect());
         }
 //        log.info(sql);
         return sql;
     }
 
-    public Alter getCreate(String destinationSchema) { return new Alter(AlterType.DDL_TABLE, getDDL(destinationSchema)); }
+    public Alter getCreate(String destinationSchema) { return new Alter(AlterType.DDL_TABLE, this.getTableName(), getDDL(destinationSchema)); }
 
-    public Alter getAdd(String destinationSchema) { return new Alter(AlterType.ADD_TABLE, getDDL(destinationSchema)); }
+    public Alter getAdd(String destinationSchema) { return new Alter(AlterType.ADD_TABLE, this.getTableName(), getDDL(destinationSchema)); }
 
     public Alter getDrop(String destinationSchema){
-        return new Alter(AlterType.DROP_TABLE, String.format("DROP %s %s.%s;", this.getTableType(), destinationSchema, this.getTableName()));
+        return new Alter(AlterType.DROP_TABLE, this.getTableName(), String.format("DROP %s %s.%s;", this.getTableType(), destinationSchema, this.getTableName()));
     }
 }

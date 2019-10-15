@@ -53,5 +53,6 @@ public class GrantSql {
             "select t3.schema_name, t3.compare_name, t3.type, t3.relationship_name, t3.relationship_acl, t3.role, string_agg(t1.value, ', ') as grants\n" +
             "from t3\n" +
             "join t1 on t1.key = t3.grants\n" +
-            "group by 1,2,3,4,5,6";
+            "group by 1,2,3,4,5,6\n" +
+            "order by t3.relationship_name";
 }

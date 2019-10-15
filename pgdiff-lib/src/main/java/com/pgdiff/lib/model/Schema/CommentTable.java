@@ -24,12 +24,12 @@ public class CommentTable extends CommonSchema<CommentTable> {
     public String getCreate() { return null; }
 
     public Alter getAdd(String destinationSchema) {
-        return new Alter( AlterType.ADD_COMMENTS,
+        return new Alter( AlterType.ADD_COMMENTS, this.getTableName(),
                 String.format("COMMENT ON %s %s.%s IS ''%s''", this.getTyp(), destinationSchema, this.getTableName(), this.getDescription()));
     }
 
     public Alter getDrop(String destinationSchema) {
-        return new Alter( AlterType.DROP_COMMENTS,
+        return new Alter( AlterType.DROP_COMMENTS, this.getTableName(),
                 String.format("COMMENT ON %s %s.%s IS null", this.getTyp(), destinationSchema, this.getTableName()));
     }
 

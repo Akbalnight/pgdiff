@@ -9,17 +9,20 @@ public class Alter {
 
     AlterType alterType;
     String alter;
-    String tableName;
+    String subAlter;
+    String objectName;
 
     public Alter(){}
-    public Alter(AlterType alterType, String alter){
+    public Alter(AlterType alterType, String objectName, String alter){
         this.alterType = alterType;
+        this.objectName = objectName;
         this.alter = alter;
     }
-    public Alter(AlterType alterType, String tableName, String alter){
+    public Alter(AlterType alterType, String objectName, String alter, String subAlter){
         this.alterType = alterType;
-        this.tableName = tableName;
+        this.objectName = objectName;
         this.alter = alter;
+        this.subAlter = subAlter;
     }
 
 
