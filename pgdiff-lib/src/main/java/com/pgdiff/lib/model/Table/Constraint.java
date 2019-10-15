@@ -2,6 +2,7 @@ package com.pgdiff.lib.model.Table;
 
 
 import com.pgdiff.lib.model.Alter;
+import com.pgdiff.lib.model.AlterType;
 import com.pgdiff.lib.model.CompareInterface;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,13 +38,13 @@ public class Constraint extends CompareInterface<Constraint> {
 
     public Alter getAdd(String destinationSchema) {
         return this.getConstraintDef() != null ?
-                new Alter(4, String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql())) :
+                new Alter(AlterType.ADD_CONSTRAINT, String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql())) :
                 null;
     }
 
     public Alter getDrop(String destinationSchema) {
         return this.getConstraintDef() != null ?
-                new Alter(0, String.format("ALTER TABLE %s.%s DROP CONSTRAINT %s CASCADE;", destinationSchema, this.getTableName(), this.getIndexName())) :
+                new Alter(AlterType.DROP_CONSTRAINT, String.format("ALTER TABLE %s.%s DROP CONSTRAINT %s CASCADE;", destinationSchema, this.getTableName(), this.getIndexName())) :
                 null;
     }
 

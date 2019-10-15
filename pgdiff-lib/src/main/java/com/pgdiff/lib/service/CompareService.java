@@ -48,6 +48,27 @@ public class CompareService {
          * Права на отношения
          * Права на атрибутты
          */
+
+        /**
+         * Функции
+         * триггерные функции
+         * последовательности
+         * Таблицы
+         *      колонки
+         *      ограничения
+         * индексы
+         * триггеры
+         * привилегии
+         * comments
+         *      -- таблицы, последовательности, индексы, представления
+         *      -- столбцы
+         *      -- ограничения
+         *      -- функции
+         *      -- триггеры
+         *
+         */
+
+
         try {
             DataSource dataSourceOne = dataSourceManager.createHikariDataSource(compareRequest.getDatabaseSettingsOne());
             DataSource dataSourceTwo = dataSourceManager.createHikariDataSource(compareRequest.getDatabaseSettingsTwo());
@@ -180,40 +201,29 @@ public class CompareService {
     private List<Alter> doDiff(List<CompareInterface> compareObjectOne, List<CompareInterface> compareObjectTwo, String destinationSchema){
 
         List<Alter> sql = new ArrayList<>();
-
         // Хранит результат сравнения
         Boolean compareVal;
-
         for(CompareInterface rowOneObj : compareObjectOne){
-
+            if(rowOneObj.getClass() == Column.class)
+                log.info("Колонки");
+            else if (rowOneObj.getClass() == Constraint.class)
+                log.info("Ограничения");
             compareVal = false;
-
             for(CompareInterface rowTwoObj : compareObjectTwo){
-
                 compareVal = rowOneObj.compare(rowTwoObj);
-
                 if(compareVal) {
-//                    String resultVal = rowOneObj.getChange(rowTwoObj, destinationSchema);
-
                     sql.addAll(rowOneObj.getChange(rowTwoObj));
-
-//                    if(resultVal != "") compareObjectTwo.logResult(rowOne, rowTwo, resultVal, 0);
                     compareObjectTwo.remove(rowTwoObj);
                     break;
                 }
             }
-
             if(!compareVal){
                 sql.add(rowOneObj.getAdd(destinationSchema));
-//                compareObjectTwo.logResult(rowOne, null, compareObjectOne.addQuery(rowOne, destinationSchema), 1);
             }
         }
         for(CompareInterface rowTwoObj : compareObjectTwo){
             sql.add(rowTwoObj.getDrop(destinationSchema));
-//            compareObjectTwo.logResult(null, rowTwo, compareObjectTwo.dropQuery(rowTwo), -1);
         }
-
-//        compareObjectOne.getResults().addAll(compareObjectTwo.getResults());
-        return sql; //compareObjectOne.getResults();
+        return sql;
     }
 }

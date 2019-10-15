@@ -2,10 +2,13 @@ package com.pgdiff.ui.controller;
 
 import com.pgdiff.lib.model.CompareRequest;
 import com.pgdiff.lib.model.DatabaseSettings;
+import com.pgdiff.lib.repository.DiffRepository;
 import com.pgdiff.lib.service.CompareService;
+import com.pgdiff.lib.service.DiffService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +23,17 @@ public class CompareController {
     @Autowired
     CompareService compareService;
 
+    @Autowired
+    DiffService diffService;
+
     @PostMapping("/find-diff")
     public ResponseEntity findDiffV2( @RequestBody CompareRequest compareRequest ){
         compareRequest.getDatabaseSettingsOne().setPgParams();
         compareRequest.getDatabaseSettingsTwo().setPgParams();
 
-        List results = compareService.initCompare(compareRequest);
+//        List results = compareService.initCompare(compareRequest);
+
+        List results = diffService.parceGrant(compareRequest);
 
         if(results != null)
             return ResponseEntity.ok().body(results);

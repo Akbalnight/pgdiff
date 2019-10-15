@@ -18,6 +18,7 @@ $('#findDiff').click(function () {
             // $('#tableDiff').bootstrapTable('load', response);
             // $('#tableDiff').bootstrapTable('filterBy', { resultCode: [0, 1, 4] })
             // $('#tableDiff').bootstrapTable('expandAllRows');
+
             var sourceSql = [];
             var destSql = [];
             var withDDL = $('#withDDL').is(':checked');
