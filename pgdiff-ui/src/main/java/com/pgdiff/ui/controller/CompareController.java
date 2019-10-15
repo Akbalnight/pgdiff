@@ -2,13 +2,10 @@ package com.pgdiff.ui.controller;
 
 import com.pgdiff.lib.model.CompareRequest;
 import com.pgdiff.lib.model.DatabaseSettings;
-import com.pgdiff.lib.repository.DiffRepository;
-import com.pgdiff.lib.service.CompareService;
 import com.pgdiff.lib.service.DiffService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +18,6 @@ import java.util.List;
 public class CompareController {
 
     @Autowired
-    CompareService compareService;
-
-    @Autowired
     DiffService diffService;
 
     @PostMapping("/find-diff")
@@ -31,9 +25,7 @@ public class CompareController {
         compareRequest.getDatabaseSettingsOne().setPgParams();
         compareRequest.getDatabaseSettingsTwo().setPgParams();
 
-//        List results = compareService.initCompare(compareRequest);
-
-        List results = diffService.parceGrant(compareRequest);
+        List results = diffService.diffService(compareRequest);
 
         if(results != null)
             return ResponseEntity.ok().body(results);
@@ -44,7 +36,7 @@ public class CompareController {
     @PostMapping("/test-connect")
     public ResponseEntity testConnecting( @RequestBody DatabaseSettings databaseSettingsOne ){
         databaseSettingsOne.setPgParams();
-        if(compareService.testConnect(databaseSettingsOne))
+        if(diffService.testConnect(databaseSettingsOne))
             return ResponseEntity.ok(new resultConnect(200, "Connect success"));
         else
             return ResponseEntity.badRequest().body(new resultConnect(400,"Connect failure"));

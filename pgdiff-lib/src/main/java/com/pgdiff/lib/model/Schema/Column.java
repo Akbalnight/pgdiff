@@ -1,7 +1,7 @@
-package com.pgdiff.lib.model.Table;
+package com.pgdiff.lib.model.Schema;
 
 import com.pgdiff.lib.model.Alter;
-import com.pgdiff.lib.model.CompareInterface;
+import com.pgdiff.lib.model.AlterType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Column extends CompareInterface<Column> {
+public class Column extends CommonSchema<Column> {
 
     String tableSchema;
     String compareName;
@@ -47,11 +47,11 @@ public class Column extends CompareInterface<Column> {
     }
 
     public Alter getAdd(String schema) {
-        return new Alter(3, String.format("ALTER TABLE %s.%s ADD COLUMN %s", schema, this.getTableName(), getAddSql()));
+        return new Alter(AlterType.ADD_COLUMN, String.format("ALTER TABLE %s.%s ADD COLUMN %s", schema, this.getTableName(), getAddSql()));
     }
 
     public Alter getDrop(String destinationSchema) {
-        return new Alter(1, String.format("ALTER TABLE %s.%s DROP COLUMN IF EXISTS %s;", destinationSchema, this.getTableName(), this.getColumnName()));
+        return new Alter(AlterType.DROP_COLUMN, String.format("ALTER TABLE %s.%s DROP COLUMN IF EXISTS %s;", destinationSchema, this.getTableName(), this.getColumnName()));
     }
 
     public List<Alter> getChange(Column column) {
@@ -61,10 +61,10 @@ public class Column extends CompareInterface<Column> {
         // Code and test a column change from integer to bigint
         if (!this.getDataType().equals(column.getDataType())) {
             sql.add(
-                new Alter( 2,
+                new Alter( AlterType.CHANGE_COLUMN,
                     String.format("-- WARNING: Это изменение типа может не сработать: (%s to %s).", column.getDataType(), this.getDataType())));
             sql.add(
-                new Alter( 2,
+                new Alter( AlterType.CHANGE_COLUMN,
                     String.format("ALTER TABLE %s.%s ALTER COLUMN %s TYPE %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getDataType())));
         }
 
@@ -72,12 +72,12 @@ public class Column extends CompareInterface<Column> {
         if (this.getColumnDefault() == null) {
             if (column.getColumnDefault() != null) {
                 sql.add(
-                    new Alter( 2,
+                    new Alter( AlterType.CHANGE_COLUMN,
                         String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP DEFAULT;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             }
         } else if (!this.getColumnDefault().equals(column.getColumnDefault())) {
             sql.add(
-                new Alter( 2,
+                new Alter( AlterType.CHANGE_COLUMN,
                     String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET DEFAULT %s;", column.getTableSchema(), this.getTableName(), this.getColumnName(), this.getColumnDefault())));
         }
 
@@ -86,11 +86,11 @@ public class Column extends CompareInterface<Column> {
         if (!this.getIsNullable().equals(column.getIsNullable())) {
             if (this.getIsNullable().equals("NULL")) {
                 sql.add(
-                    new Alter( 2,
+                    new Alter( AlterType.CHANGE_COLUMN,
                         String.format("ALTER TABLE %s.%s ALTER COLUMN %s DROP NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             } else {
                 sql.add(
-                    new Alter( 2,
+                    new Alter( AlterType.CHANGE_COLUMN,
                         String.format("ALTER TABLE %s.%s ALTER COLUMN %s SET NOT NULL;", column.getTableSchema(), this.getTableName(), this.getColumnName())));
             }
         } else {

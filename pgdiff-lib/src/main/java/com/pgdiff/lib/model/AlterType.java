@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum AlterType {
 
     /**
-     * Последовательность в pg_dump
+     * --- PG_DUMP ---
      * drop constraint
      * drop trigger
      * drop index
@@ -26,22 +26,59 @@ public enum AlterType {
      * grants
      * */
 
+    /**
+     * --- PG_DIFF ---
+     * Схемы
+     * Роли
+     * Последовательности (Sequences)
+     * + Таблицы + колонки + ограничения (pk / un / fk)
+     * + Вьюхи
+     * Функции
+     * Триггеры
+     * Владельцы
+     * Права на отношения
+     * Права на атрибутты
+     */
+
+    /**
+     * --- CLONE_MODEL ---
+     * Функции
+     * триггерные функции
+     * последовательности
+     * Таблицы
+     *      колонки
+     *      ограничения
+     * индексы
+     * триггеры
+     * привилегии
+     * comments
+     *      -- таблицы, последовательности, индексы, представления
+     *      -- столбцы
+     *      -- ограничения
+     *      -- функции
+     *      -- триггеры
+     *
+     */
+
     DROP_FUNCTION(  0),
     ADD_FUNCTION(   1),
     DROP_SEQUENCE(  2),
     ADD_SEQUENCE(   3),
-    DROP_TABLE(     4),
-    ADD_TABLE(      5),
-    DROP_CONSTRAINT(6),
-    DROP_COLUMN(    7),
-    CHANGE_COLUMN(  8),
-    ADD_COLUMN(     9),
-    ADD_CONSTRAINT( 10),
-    ADD_INDEX(      11),
-    ADD_TRIGGER(    12),
-    ADD_COMMENTS(   13),
-    ADD_GRANT(      14),
-    DROP_GRANT(     15);
+    DDL_TABLE(      4),
+    DROP_TABLE(     5),
+    ADD_TABLE(      6),
+    DROP_CONSTRAINT(7),
+    DROP_COLUMN(    8),
+    CHANGE_COLUMN(  9),
+    ADD_COLUMN(     10),
+    ADD_CONSTRAINT( 11),
+    ADD_INDEX(      12),
+    ADD_TRIGGER(    13),
+    ADD_COMMENTS(   14),
+    DROP_COMMENTS(   14),
+    DROP_GRANT(     15),
+    ADD_GRANT(      16);
+
 
     Integer sortCode;
 }

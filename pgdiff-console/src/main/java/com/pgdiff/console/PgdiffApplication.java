@@ -3,7 +3,6 @@ package com.pgdiff.console;
 import com.pgdiff.lib.model.CompareRequest;
 import com.pgdiff.lib.model.DatabaseSettings;
 import com.pgdiff.lib.model.Result;
-import com.pgdiff.lib.service.CompareService;
 import com.pgdiff.lib.service.FileService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,78 +1,87 @@
 package com.pgdiff.lib.repository;
 
-import com.pgdiff.lib.model.Grant;
-import com.pgdiff.lib.model.SqlSchema;
+import com.pgdiff.lib.model.Schema.Grant;
+import com.pgdiff.lib.model.Sql.CommonSql;
+import com.pgdiff.lib.model.Schema.Column;
+import com.pgdiff.lib.model.Schema.Constraint;
+import com.pgdiff.lib.model.Schema.Table;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.pgdiff.lib.model.Sql.CommonSql.mappingTableFields;
+import static com.pgdiff.lib.model.Sql.TableSql.TABLE_SQL;
+import static com.pgdiff.lib.model.Sql.ColumnSql.COLUMN_SQL;
+import static com.pgdiff.lib.model.Sql.ConstraintSql.CONSTRAINT_SQL;
+import static com.pgdiff.lib.model.Sql.GrantSql.GRANT_SQL;
 
 @Repository
 public class DiffRepository {
 
-    private final String DDD = "" +
-            "WITH t AS (\n" +
-            "    select\n" +
-            "        n.nspname AS schema_name\n" +
-            "      , c.relkind || '.' || c.relname AS compare_name\n" +
-            "      , CASE c.relkind\n" +
-            "        WHEN 'r' THEN 'TABLE'\n" +
-            "        WHEN 'v' THEN 'VIEW'\n" +
-            "        WHEN 'S' THEN 'SEQUENCE'\n" +
-            "        WHEN 'f' THEN 'FOREIGN TABLE'\n" +
-            "        END as type\n" +
-            "      , c.relname AS relationship_name\n" +
-            "      , unnest(c.relacl) AS relationship_acl\n" +
-            "    FROM pg_class c\n" +
-            "    LEFT JOIN pg_namespace n ON (n.oid = c.relnamespace)\n" +
-            "    WHERE c.relkind = any(:relkinds)\n" +
-            "    AND n.nspname = :schema\n" +
-            "    %s\n" +
-            "),\n" +
-            "t1 as (\n" +
-            "    select * from json_each_text\n" +
-            "    ('{\n" +
-            "    \"a\": \"INSERT\",\n" +
-            "    \"r\": \"SELECT\",\n" +
-            "    \"w\": \"UPDATE\",\n" +
-            "    \"d\": \"DELETE\",\n" +
-            "    \"D\": \"TRUNCATE\",\n" +
-            "    \"x\": \"REFERENCES\",\n" +
-            "    \"t\": \"TRIGGER\",\n" +
-            "    \"X\": \"EXECUTE\",\n" +
-            "    \"U\": \"USAGE\",\n" +
-            "    \"C\": \"CREATE\",\n" +
-            "    \"c\": \"CONNECT\",\n" +
-            "    \"T\": \"TEMPORARY\"\n" +
-            "    }')\n" +
-            "),\n" +
-            "t2 as (\n" +
-            "    SELECT *,\n" +
-            "    regexp_matches(relationship_acl::text, '([a-zA-Z0-9]+)*=([rwadDxtXUCcT]+)\\/([a-zA-Z0-9]+)$') as relationship_arr\n" +
-            "    FROM t\n" +
-            "),\n" +
-            "t3 as\n" +
-            "(\n" +
-            "    select *,\n" +
-            "    relationship_arr[1] as role,\n" +
-            "    unnest(regexp_split_to_array(relationship_arr[2],'')) as grants\n" +
-            "    from t2\n" +
-            ")\n" +
-            "select t3.schema_name, t3.compare_name, t3.type, t3.relationship_name, t3.relationship_acl, t3.role, string_agg(t1.value, ', ') as grants\n" +
-            "from t3\n" +
-            "join t1 on t1.key = t3.grants\n" +
-            "group by 1,2,3,4,5,6";
+    public List<Table> getTableList(DataSource dataSource, String schema, Boolean withPartitions){
 
-    public List<Grant> dddd(DataSource dataSource, String schema, Boolean withPartitions, String[] relkinds) {
+        // Получить таблицы
+        List<Table> tables = getTables(dataSource, schema, withPartitions);
+
+        // Получить колонки
+        List<Column> columnsOne = getColumnList(dataSource, schema, withPartitions);
+
+        // Получить ограничения
+        List<Constraint> constraintsOne = getConstraintList(dataSource, schema, withPartitions);
+
+        // Сгруппировать колонки по таблицам
+        Map<String, List<Column>> mapColumnsOne = columnsOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
+
+        // Сгруппировать ограничения по таблицам
+        Map<String, List<Constraint>> mapConstraintsOne = constraintsOne.stream().collect(Collectors.groupingBy(w -> w.getTableName()));
+
+        // Присвоить таблицам колонки и ограничения
+        tables = mappingTableFields(tables, mapColumnsOne, mapConstraintsOne);
+
+        return tables;
+
+    }
+
+    private List<Table> getTables(DataSource dataSource, String schema, Boolean withPartitions){
+        return
+                new NamedParameterJdbcTemplate(dataSource)
+                        .query(
+                                CommonSql.setPartitionFiltersForPgClass(TABLE_SQL, withPartitions),
+                                new MapSqlParameterSource("schema", schema),
+                                BeanPropertyRowMapper.newInstance(Table.class));
+    }
+
+    public List<Column> getColumnList(DataSource dataSource, String schema, Boolean withPartitions){
+        return
+                new NamedParameterJdbcTemplate(dataSource)
+                        .query(
+                                CommonSql.setPartitionFiltersForPgClass(COLUMN_SQL, withPartitions),
+                                new MapSqlParameterSource("schema", schema),
+                                BeanPropertyRowMapper.newInstance(Column.class));
+    }
+
+    public List<Constraint> getConstraintList(DataSource dataSource, String schema, Boolean withPartitions){
+        return
+                new NamedParameterJdbcTemplate(dataSource)
+                        .query(
+                                CommonSql.setPartitionFiltersForPgClass(CONSTRAINT_SQL, withPartitions),
+                                new MapSqlParameterSource("schema", schema),
+                                BeanPropertyRowMapper.newInstance(Constraint.class));
+    }
+
+    public List<Grant> getGrantList(DataSource dataSource, String schema, Boolean withPartitions, String[] relkinds) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("schema", schema);
         params.addValue("relkinds", relkinds);
         return
                 new NamedParameterJdbcTemplate(dataSource)
                         .query(
-                                SqlSchema.setPartitionFiltersForPgClass(DDD, withPartitions),
+                                CommonSql.setPartitionFiltersForPgClass(GRANT_SQL, withPartitions),
                                 params,
                                 BeanPropertyRowMapper.newInstance(Grant.class));
 

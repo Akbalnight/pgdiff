@@ -7,7 +7,8 @@ $('#findDiff').click(function () {
         databaseSettingsOne: getOneConnect(),
         databaseSettingsTwo: getTwoConnect(),
         operations:[$('#operation').val()],
-        withPartitions: $('#withPartitions').is(':checked')
+        withPartitions: $('#withPartitions').is(':checked'),
+        withTableDDL: $('#withDDL').is(':checked')
     };
 
 
@@ -26,42 +27,47 @@ $('#findDiff').click(function () {
             for(var i = 0; i <  response.length; i++){
                 var row = response[i];
 
-                if(row.resultCode !== -1) {
-
-                    var altersSrt = row.alters ? row.alters.join('\n') + "\n" : "";
-                    var altersLen = row.alters ? row.alters.length : 0;
-
-                    var ddlOne;
-                    var ddlTwo;
-                    if(withDDL){
-                        ddlOne = row.ddlTableOne ? row.ddlTableOne : "";
-                        ddlTwo = row.ddlTableTwo ? row.ddlTableTwo : "";
-                    }else {
-                        ddlOne = row.resultCode === 0 ? row.ddlTableOne : "";
-                        // ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
-                        ddlTwo = "";
-                    }
-
-                    var ddlOneLen = ddlOne !== "" ? ddlOne.split('\n').length : 0;
-                    var ddlTwoLen = ddlTwo !== "" ? ddlTwo.split('\n').length : 0;
-
-                    var ddlOneOffset = 0;
-                    var ddlTwoOffset = 0;
-
-                    if(ddlOneLen > ddlTwoLen) ddlTwoOffset = ddlOneLen - ddlTwoLen;
-                    else ddlOneOffset = ddlTwoLen - ddlOneLen;
-
                     sourceSql.push(
                         "-- TABLE NAME: " + (row.nameTableOne ? row.nameTableOne : row.nameTableTwo) +
                         "\n" + getDestDdl(ddlOne, 0, ddlOneOffset) +
                         altersSrt + "\n\n");
 
-                    // console.log("ddl: ", ddl);
-                    // console.log("ddlTwoOffset: ", ddlTwoOffset);
-                    // console.log("altersLen: ", altersLen);
-                    ddlTwoOffset += altersLen + 2;
-                    destSql.push(getDestDdl( ddlTwo, 1, ddlTwoOffset));
-                }
+                // if(row.resultCode !== -1) {
+                //
+                //     var altersSrt = row.alters ? row.alters.join('\n') + "\n" : "";
+                //     var altersLen = row.alters ? row.alters.length : 0;
+                //
+                //     var ddlOne;
+                //     var ddlTwo;
+                //     if(withDDL){
+                //         ddlOne = row.ddlTableOne ? row.ddlTableOne : "";
+                //         ddlTwo = row.ddlTableTwo ? row.ddlTableTwo : "";
+                //     }else {
+                //         ddlOne = row.resultCode === 0 ? row.ddlTableOne : "";
+                //         // ddlTwo = row.resultCode === 4 ? row.ddlTableTwo : "";
+                //         ddlTwo = "";
+                //     }
+                //
+                //     var ddlOneLen = ddlOne !== "" ? ddlOne.split('\n').length : 0;
+                //     var ddlTwoLen = ddlTwo !== "" ? ddlTwo.split('\n').length : 0;
+                //
+                //     var ddlOneOffset = 0;
+                //     var ddlTwoOffset = 0;
+                //
+                //     if(ddlOneLen > ddlTwoLen) ddlTwoOffset = ddlOneLen - ddlTwoLen;
+                //     else ddlOneOffset = ddlTwoLen - ddlOneLen;
+                //
+                //     sourceSql.push(
+                //         "-- TABLE NAME: " + (row.nameTableOne ? row.nameTableOne : row.nameTableTwo) +
+                //         "\n" + getDestDdl(ddlOne, 0, ddlOneOffset) +
+                //         altersSrt + "\n\n");
+                //
+                //     // console.log("ddl: ", ddl);
+                //     // console.log("ddlTwoOffset: ", ddlTwoOffset);
+                //     // console.log("altersLen: ", altersLen);
+                //     ddlTwoOffset += altersLen + 2;
+                //     destSql.push(getDestDdl( ddlTwo, 1, ddlTwoOffset));
+                // }
             }
             source.session.setValue(sourceSql.join(""));
             dest.session.setValue(destSql.join(""));

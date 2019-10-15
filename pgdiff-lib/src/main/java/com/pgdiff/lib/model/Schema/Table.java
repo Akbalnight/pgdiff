@@ -1,5 +1,7 @@
-package com.pgdiff.lib.model.Table;
+package com.pgdiff.lib.model.Schema;
 
+import com.pgdiff.lib.model.Alter;
+import com.pgdiff.lib.model.AlterType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +14,7 @@ import java.util.List;
 @Setter
 @Log4j2
 @NoArgsConstructor
-public class Table {
+public class Table extends CommonSchema<Table> {
 
     String tableSchema;
     String compareName;
@@ -22,8 +24,8 @@ public class Table {
     List<Column> columns = new ArrayList<>();
     List<Constraint> constraints = new ArrayList<>();
 
-    public Boolean equals(Table table){
-        return this.getCompareName().equals(table.getCompareName());
+    public boolean compare(Table Table) {
+        return this.getCompareName().equals(Table.getCompareName());
     }
 
     public String getDDL(String destinationSchema){
@@ -34,10 +36,10 @@ public class Table {
 
             List<String> columnSql = new ArrayList();
 
-            for (Column column : columns) {
+            for (Column column : this.getColumns()) {
                 columnSql.add(column.getCreate());
             }
-            for (Constraint constraint : constraints) {
+            for (Constraint constraint : this.getConstraints()) {
                 columnSql.add(constraint.getCreate());
             }
             sql += String.join(",\n\t", columnSql);
@@ -50,9 +52,11 @@ public class Table {
         return sql;
     }
 
-    public String getDrop(String destinationSchema){
-        String sql = String.format("DROP %s %s.%s;", this.getTableType(), destinationSchema, this.getTableName());
-//        log.info(sql);
-        return sql;
+    public Alter getCreate(String destinationSchema) { return new Alter(AlterType.DDL_TABLE, getDDL(destinationSchema)); }
+
+    public Alter getAdd(String destinationSchema) { return new Alter(AlterType.ADD_TABLE, getDDL(destinationSchema)); }
+
+    public Alter getDrop(String destinationSchema){
+        return new Alter(AlterType.DROP_TABLE, String.format("DROP %s %s.%s;", this.getTableType(), destinationSchema, this.getTableName()));
     }
 }

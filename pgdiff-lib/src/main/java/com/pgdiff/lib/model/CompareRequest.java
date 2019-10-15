@@ -12,4 +12,5 @@ public class CompareRequest {
     private DatabaseSettings databaseSettingsTwo;
     private List<String> operations;
     private Boolean withPartitions;
+    private Boolean withTableDDL;
 }

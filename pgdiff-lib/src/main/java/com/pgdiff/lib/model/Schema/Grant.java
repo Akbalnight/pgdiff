@@ -1,5 +1,7 @@
-package com.pgdiff.lib.model;
+package com.pgdiff.lib.model.Schema;
 
+import com.pgdiff.lib.model.Alter;
+import com.pgdiff.lib.model.AlterType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +14,7 @@ import java.util.List;
 @Setter
 @Log4j2
 @NoArgsConstructor
-public class Grant extends CompareInterface<Grant> {
+public class Grant extends CommonSchema<Grant> {
 
     private String compareName;
     private String schemaName;
