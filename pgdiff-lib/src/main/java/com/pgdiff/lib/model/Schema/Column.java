@@ -31,14 +31,17 @@ public class Column extends CommonSchema<Column> {
         String sql = "";
         sql += String.format("%s %s", this.getColumnName(), this.getDataType());
 
-        if (this.getIsNullable().equals("NO"))
-            sql += " NOT NULL";
-        else
-            sql += " NULL";
+//        if (this.getIsNullable().equals("NO"))
+//            sql += " NOT NULL";
+//        else
+//            sql += " NULL";
+
+        sql += String.format(" %s", this.getIsNullable());
 
         if (this.getColumnDefault() != null)
             sql += String.format(" DEFAULT %s", this.getColumnDefault());
 
+        sql += ";";
         return sql;
     }
 

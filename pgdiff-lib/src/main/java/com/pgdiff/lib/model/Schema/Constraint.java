@@ -31,13 +31,17 @@ public class Constraint extends CommonSchema<Constraint> {
     }
 
     private String getAddSql() {
-        return String.format("CONSTRAINT %s %s", this.getIndexName(), this.getConstraintDef());
+        return getAddSql(this.getSchemaName());
     }
+    private String getAddSql(String destinationSchema) {
+        return String.format("CONSTRAINT %s %s", this.getIndexName(), this.getConstraintDef().replace(this.getSchemaName() + ".", destinationSchema + "."));
+    }
+
     public String getCreate() { return getAddSql(); }
 
     public Alter getAdd(String destinationSchema) {
         return this.getConstraintDef() != null ?
-                new Alter(AlterType.ADD_CONSTRAINT, this.getTableName(), String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql())) :
+                new Alter(AlterType.ADD_CONSTRAINT, this.getTableName(), String.format("ALTER TABLE %s.%s ADD %s;", destinationSchema, this.getTableName(), getAddSql(destinationSchema))) :
                 null;
     }
 
@@ -50,6 +54,8 @@ public class Constraint extends CommonSchema<Constraint> {
     public List<Alter> getChange(Constraint constraint) {
         List<Alter> sql = new ArrayList<>();
 
+        String thisNewConstraintDef = this.getConstraintDef().replace(this.getSchemaName() + ".", constraint.getSchemaName() + ".");
+
         if (this.getConstraintDef() == null && constraint.getConstraintDef() != null) {
             // c1.constraint does not exist, c2.constraint does, so
             // Drop constraint
@@ -59,7 +65,7 @@ public class Constraint extends CommonSchema<Constraint> {
             // c1.constraint exists, c2.constraint does not, so
             sql.add(getAdd(constraint.getSchemaName()));
 
-        } else if ( !this.getConstraintDef().equals(constraint.getConstraintDef())){
+        } else if ( !thisNewConstraintDef.equals(constraint.getConstraintDef())){
             sql.add(getDrop(constraint.getSchemaName()));
             sql.add(getAdd(constraint.getSchemaName()));
         }
@@ -67,3 +73,6 @@ public class Constraint extends CommonSchema<Constraint> {
         return sql;
     }
 }
+
+
+

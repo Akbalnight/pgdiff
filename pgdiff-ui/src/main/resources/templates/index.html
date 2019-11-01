@@ -227,12 +227,12 @@
         var source = ace.edit('source');
         source.getSession().setMode("ace/mode/sql");
         source.setShowPrintMargin(false);
-        source.setReadOnly(true);
+        // source.setReadOnly(true);
 
         var dest = ace.edit('dest');
         dest.getSession().setMode("ace/mode/sql");
         dest.setShowPrintMargin(false);
-        dest.setReadOnly(true);
+        // dest.setReadOnly(true);
 
         source.session.on("changeScrollTop", function(delta){
             dest.session.setScrollTop(delta);
