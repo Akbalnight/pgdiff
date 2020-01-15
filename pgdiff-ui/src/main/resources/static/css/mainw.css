@@ -1,0 +1,120 @@
+body{
+    height: 100vh;
+    width: 100vw;
+}
+.root{
+    height: 100%;
+    width: 100%;
+    /*background-color: rgba(255, 0, 0, 0.17);*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+}
+
+.header, .footer{
+    height: 50px;
+    width: 100%;
+    /*background-color: rgba(0, 0, 255, 0.65);*/
+}
+.footer{
+    /*background-color: green;*/
+}
+
+.content-container{
+    height: calc(100vh - 100px);
+    /*background-color: #0b2e13;*/
+    /*flex-grow: 1;*/
+
+    display: flex;
+}
+
+.side {
+    width: 30%;
+    height: 100%;
+    background-color: #969695;
+    /*float: left;*/
+}
+
+.side ul{
+    margin: 0;
+    padding: 0;
+    color: white;
+    list-style: none;
+}
+
+.side ul li{
+    background-color: #169944;
+    margin: 5px;
+    padding: 5px 20px;
+    text-align: right;
+}
+
+.content{
+    width: 70%;
+    height: 100%;
+    background-color: #cecece;
+    /*float: right;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content .learning{
+    width: 400px;
+    background-color: #ffffff;
+}
+
+.content .learning .example {
+    display: flex;
+}
+
+.content .learning .example span{
+    border: 1px solid blue;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 0 5px;
+    text-align: center;
+}
+
+.content .learning .example span:first-child {
+    flex-basis: 66%;
+}
+
+.content .learning .example span:last-child {
+    flex-basis: 33%;
+}
+
+.content .learning .numbers div,
+.content .learning .checkLine{
+    display: flex;
+}
+.content .learning .numbers div button,
+.content .learning .checkLine button{
+    flex: 1 1 auto;
+    /*background-color: red;*/
+    justify-content: center;
+    margin: 5px;
+    padding: 10px 0;
+}
+
+.content .learning .checkLine button:first-child{
+    /*flex-grow: 1;*/
+    flex-basis: 33%;
+}
+.content .learning .checkLine button:last-child{
+    /*flex-grow: 2;*/
+    flex-basis: 66%;
+}
+
+/*.content .learning .numbers div .btn-primary {*/
+/*    color: #fff;*/
+/*    background-color: red;*/
+/*    border-color: #d70000;*/
+/*}*/
+
+/*.content .learning .numbers div button:hover{*/
+/*    background-color: #d70000;*/
+/*}*/
+
+/*.content .learning .numbers div button:focus{*/
+/*    background-color: #920000;*/
+/*}*/

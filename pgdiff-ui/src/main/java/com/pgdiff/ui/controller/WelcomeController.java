@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WelcomeController {
     @GetMapping("/")
     public String main(Model model) {
-        return "index"; //view
+        return "indexw"; //view
     }
 }
